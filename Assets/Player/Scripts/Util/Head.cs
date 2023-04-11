@@ -4,14 +4,22 @@ using UnityEngine;
 
 public class Head : MonoBehaviour
 {
-    public Vector2 _targetPosition;
-    public int _frameDelay;
-    public Transform _frontHead;
-    public Queue<Vector2> _expectedPaths;
-    void Awake()
+    private Vector2 _targetPosition;
+    public int _frameDelay { set; private get; }
+    public Transform _frontHead { set; private get; }
+    private Queue<Vector2> _expectedPaths;
+    void OnEnable()
     {
-        _expectedPaths = new Queue<Vector2>();
+        if(_expectedPaths == null)
+        {
+            _expectedPaths = new Queue<Vector2>();
+        }
+        if(_frontHead != null)
+        {
+            _targetPosition = _frontHead.position;
+        }
     }
+
 
     void FixedUpdate()
     {
@@ -23,5 +31,10 @@ public class Head : MonoBehaviour
         }
 
         transform.position = _targetPosition;
+    }
+
+    private void OnDisable()
+    {
+        _expectedPaths?.Clear();
     }
 }

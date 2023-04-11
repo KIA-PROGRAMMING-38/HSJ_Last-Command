@@ -1,33 +1,34 @@
 using UnityEngine;
+using Enum;
 
 public class PlayerIdleMove : StateMachineBehaviour
 {
-    private Vector3 _moveVector;
+    private Vector3 _moveVector = Vector2.right;
     [SerializeField] private float _moveSpeed;
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        _moveVector = Vector2.right;
-    }
+    
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(Input.GetKeyDown(KeyCode.RightArrow))
+        PlayerInput input = animator.GetComponent<PlayerInput>();
+        
+        switch(input._moveDirection)
         {
-            _moveVector = Vector2.right;
-        }
-        else if(Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            _moveVector = Vector2.left;
-        }
-        else if(Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            _moveVector = Vector2.up;
-        }
-        else if(Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            _moveVector = Vector2.down;
+            case Direction.Right:
+                _moveVector = Vector2.right;
+                break;
+            case Direction.Left:
+                _moveVector = Vector2.left;
+                break;
+            case Direction.Up:
+                _moveVector = Vector2.up;
+                break;
+            case Direction.Down:
+                _moveVector = Vector2.down;
+                break;
+            default:
+                break;
         }
 
-        animator.transform.position = animator.transform.position + (_moveVector * (Time.deltaTime * _moveSpeed));
+        animator.transform.position += (_moveVector * (Time.deltaTime * _moveSpeed));
     }
 }
