@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class Head : MonoBehaviour
     public int _frameDelay { set; private get; }
     public Transform _frontHead { set; private get; }
     private Queue<Vector2> _expectedPaths;
+
     void OnEnable()
     {
         if(_expectedPaths == null)
@@ -35,6 +37,12 @@ public class Head : MonoBehaviour
 
     private void OnDisable()
     {
+        ClearPath();
+    }
+
+    public void ClearPath()
+    {
         _expectedPaths?.Clear();
+        _targetPosition = _frontHead.position;
     }
 }

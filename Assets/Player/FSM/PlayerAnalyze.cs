@@ -29,8 +29,6 @@ public class PlayerAnalyze : StateMachineBehaviour
         float Vertical = Input.GetAxisRaw("Vertical");
 
         _playerTransform.position += new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.deltaTime;
-
-        
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

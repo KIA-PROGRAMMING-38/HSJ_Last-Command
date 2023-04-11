@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Enum;
+using UnityEngine.UIElements;
 
 public class PlayerInput : MonoBehaviour
 {
     private Animator _animator;
-    public Direction _moveDirection;
+    public Direction _moveDirection { get; private set; }
+
+    [SerializeField] private float _dashWaitTime;
+    private float _lastDashTime;
     private void Awake()
     {
         _animator = gameObject.GetComponent<Animator>();
@@ -30,13 +34,24 @@ public class PlayerInput : MonoBehaviour
             _moveDirection = Direction.Down;
         }
 
+
         if (Input.GetKey(KeyCode.D))
         {
-            _animator.SetBool("isAnalyzing",true);
+            _animator.SetBool("isAnalyzing", true);
         }
         else
         {
             _animator.SetBool("isAnalyzing", false);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (Time.time > _lastDashTime + _dashWaitTime)
+            {
+                _lastDashTime = Time.time;
+                _animator.SetBool("isDashing", true);
+            }
         }
     }
 }
