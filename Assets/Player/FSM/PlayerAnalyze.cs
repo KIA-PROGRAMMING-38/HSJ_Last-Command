@@ -10,7 +10,6 @@ public class PlayerAnalyze : StateMachineBehaviour
     public float Vertical;
     public float Horizontal;
     [SerializeField] private float _moveSpeed;
-    [SerializeField] private float _createRadius;
     [SerializeField] private GameObject _bullet;
 
     private float _attackStartTime;
@@ -70,8 +69,7 @@ public class PlayerAnalyze : StateMachineBehaviour
 
     void ShootBullet()
     {
-        Vector2 createPosition = (Vector2)_playerTransform.position + (Random.insideUnitCircle.normalized * _createRadius);
-        GameObject bullet = Instantiate(_bullet, createPosition, new Quaternion(0,0,0,0));
+        GameObject bullet = Instantiate(_bullet, _playerTransform.position, new Quaternion(0,0,0,0));
         bullet.AddComponent<Bullet>();
     }
 }

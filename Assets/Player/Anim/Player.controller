@@ -285,7 +285,7 @@ MonoBehaviour:
   Vertical: 0
   Horizontal: 0
   _moveSpeed: 1
-  _createRadius: 0
+  _createRadius: 1
   _bullet: {fileID: 8075038745953617309, guid: 0dddb4e436bdc15499885ad1151e6911, type: 3}
   _attackWaitTime: 1
 --- !u!1102 &7342826717379804949

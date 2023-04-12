@@ -48,14 +48,12 @@ public class Bullet : MonoBehaviour
         yield return wait;
         ResetSettings(_bossPosition, _lerpSpeed2);
 
-        while (Vector2.Distance(transform.position, _bossPosition) >= 0.1f)
+        while (true)
         {
             float ratio = Mathf.Clamp01(Time.deltaTime / _moveTime);
             transform.position = Vector3.Lerp(transform.position, _bossPosition, ratio);
             yield return null;
         }
-
-        gameObject.SetActive(false);
     }
 
     void ResetSettings(Vector2 targetPosition, float lerpSpeed)
