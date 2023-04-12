@@ -1,3 +1,4 @@
+using Move;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,9 @@ public class PlayerAnalyze : StateMachineBehaviour
 {
     private int _activeHeadCount;
     private Transform _playerTransform;
-    [SerializeField] private float _moveSpeed;
+    public float Vertical;
+    public float Horizontal;
+[SerializeField] private float _moveSpeed;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _playerTransform = animator.transform;
@@ -23,14 +26,12 @@ public class PlayerAnalyze : StateMachineBehaviour
         }
     }
 
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        float Horizontal = Input.GetAxisRaw("Horizontal");
-        float Vertical = Input.GetAxisRaw("Vertical");
-
-        _playerTransform.position += new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.deltaTime;
+        Horizontal = Input.GetAxisRaw("Horizontal");
+        Vertical = Input.GetAxisRaw("Vertical");
+        _playerTransform.Translate(new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.deltaTime);
     }
-
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         for (int i = 0; i < _activeHeadCount; ++i)
