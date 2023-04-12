@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
         for(int i = 1; i < _maxLength; ++i)
         {
             GameObject newHead = Instantiate(_snakeSprite, transform);
+            newHead.name = $"Head{i}";
             _heads[i] = newHead;
             Head headComponent = newHead.AddComponent<Head>();
             headComponent._frameDelay = _frameDelay;
@@ -68,5 +69,6 @@ public class Player : MonoBehaviour
     public void UseEnergy()
     {
         _energy.Pop();
+        _currentLength--;
     }
 }
