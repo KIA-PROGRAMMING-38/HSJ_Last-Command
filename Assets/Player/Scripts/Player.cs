@@ -13,8 +13,7 @@ public class Player : MonoBehaviour
     [SerializeField] private int _frameDelay;
 
     private GameObject[] _heads;
-    private bool[] _energy;
-    private int _chargedEnergy;
+    private Stack<bool> _energy;
 
     private void Awake()
     {
@@ -23,8 +22,7 @@ public class Player : MonoBehaviour
         _heads = new GameObject[_maxLength];
         _heads[0] = gameObject;
 
-        _energy = new bool[_maxLength - _defaultLength];
-        _chargedEnergy = 0;
+        _energy = new Stack<bool>();
 
         for(int i = 1; i < _maxLength; ++i)
         {
@@ -40,12 +38,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void EarnEnergy()
     {
         _currentLength++;
@@ -57,8 +49,24 @@ public class Player : MonoBehaviour
         else
         {
             transform.GetChild(_currentLength - 2).gameObject.SetActive(true);
-            _energy[_chargedEnergy] = true;
-            ++_chargedEnergy;
+            _energy.Push(true);
         }
+    }
+
+    public bool IsEnergyCharged()
+    {
+        if(_energy.Count > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void UseEnergy()
+    {
+        _energy.Pop();
     }
 }

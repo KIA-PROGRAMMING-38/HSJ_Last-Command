@@ -9,7 +9,10 @@ public class PlayerAnalyze : StateMachineBehaviour
     private Transform _playerTransform;
     public float Vertical;
     public float Horizontal;
-[SerializeField] private float _moveSpeed;
+    [SerializeField] private float _moveSpeed;
+
+    private float _lastAttackTime;
+    [SerializeField] private float _attackWaitTime;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _playerTransform = animator.transform;
@@ -31,6 +34,12 @@ public class PlayerAnalyze : StateMachineBehaviour
         Horizontal = Input.GetAxisRaw("Horizontal");
         Vertical = Input.GetAxisRaw("Vertical");
         _playerTransform.Translate(new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.deltaTime);
+        if (Time.time > _lastAttackTime + _attackWaitTime)
+        {
+            _lastAttackTime = Time.time;
+            Attack(animator.GetComponent<Player>());
+        }
+
     }
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -38,6 +47,14 @@ public class PlayerAnalyze : StateMachineBehaviour
         {
             GameObject activeHead = _playerTransform.GetChild(i).gameObject;
             activeHead.SetActive(true);
+        }
+    }
+    void Attack(Player player)
+    {
+        if(player.IsEnergyCharged())
+        {
+            Debug.Log("АјАн!");
+            player.UseEnergy();
         }
     }
 }
