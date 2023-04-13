@@ -1,22 +1,28 @@
 using UnityEngine;
 using Enum;
-using Move;
 
 public class PlayerIdleMove : StateMachineBehaviour
 {
     private Vector3 _moveVector = Vector2.right;
     [SerializeField] private float _moveSpeed;
-    private GameObject _player;
-
+    [SerializeField] private float _overclockWeight;
+    private Player _player;
+    private PlayerInput _input;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _player = animator.gameObject;
+        _input = animator.GetComponent<PlayerInput>();
+        _player = animator.GetComponent<Player>();
+        if(_player != null)
+        {
+            _player.OnOverclock -= OnOverclock;
+            _player.OnOverclock += OnOverclock;
+            _player.OnOverclockEnd -= OnOverclockEnd;
+            _player.OnOverclockEnd += OnOverclockEnd;
+        }
     }
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        PlayerInput input = animator.GetComponent<PlayerInput>();
-        
-        switch(input._moveDirection)
+        switch(_input._moveDirection)
         {
             case Direction.Right:
                 _moveVector = Vector2.right;
@@ -35,5 +41,22 @@ public class PlayerIdleMove : StateMachineBehaviour
         }
 
         animator.transform.position += (_moveVector * (Time.deltaTime * _moveSpeed));
+    }
+    private void OnDestroy()
+    {
+        if (_player != null)
+        {
+            _player.OnOverclock -= OnOverclock;
+            _player.OnOverclockEnd -= OnOverclockEnd;
+        }
+    }
+
+    private void OnOverclock()
+    {
+        _moveSpeed *= _overclockWeight;
+    }
+    private void OnOverclockEnd()
+    {
+        _moveSpeed /= _overclockWeight;
     }
 }

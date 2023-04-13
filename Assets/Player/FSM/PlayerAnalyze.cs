@@ -1,11 +1,11 @@
-using Move;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerAnalyze : StateMachineBehaviour
 {
-    private int _activeHeadCount;
+    private int _activeEnergyCount;
     private Transform _playerTransform;
     public float Vertical;
     public float Horizontal;
@@ -14,20 +14,34 @@ public class PlayerAnalyze : StateMachineBehaviour
 
     private float _attackStartTime;
     [SerializeField] private float _attackWaitTime;
+    [SerializeField] private float _overclockWeight;
+    private Player _player;
+    private bool _attacked;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _playerTransform = animator.transform;
         _attackStartTime = 0;
-        _activeHeadCount = 0;
+        _attacked = false;
+
+        _activeEnergyCount = 0;
         for (int i = 0; i < _playerTransform.childCount; ++i)
         {
             GameObject followingHead = _playerTransform.GetChild(i).gameObject;
             followingHead.transform.localPosition = new Vector2(0, 0);
             if (followingHead.activeSelf)
             {
-                ++_activeHeadCount;
+                ++_activeEnergyCount;
                 followingHead.SetActive(false);
             }
+        }
+        _player = animator.GetComponent<Player>();
+
+        if(_player != null)
+        {
+            _player.OnOverclock -= OnOverclock;
+            _player.OnOverclock += OnOverclock;
+            _player.OnOverclockEnd -= OnOverclockEnd;
+            _player.OnOverclockEnd += OnOverclockEnd;
         }
     }
 
@@ -50,10 +64,22 @@ public class PlayerAnalyze : StateMachineBehaviour
     }
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        for (int i = 0; i < _activeHeadCount; ++i)
+        for (int i = 0; i < _activeEnergyCount; ++i)
         {
-            GameObject activeHead = _playerTransform.GetChild(i).gameObject;
-            activeHead.SetActive(true);
+            GameObject activeEnergy = _playerTransform.GetChild(i).gameObject;
+            activeEnergy.SetActive(true);
+        }
+        if(_attacked)
+        {
+            _player.EndOverclock();
+        }
+    }
+    private void OnDestroy()
+    {
+        if (_player != null)
+        {
+            _player.OnOverclock -= OnOverclock;
+            _player.OnOverclockEnd -= OnOverclockEnd;
         }
     }
     void Attack(Player player)
@@ -63,7 +89,8 @@ public class PlayerAnalyze : StateMachineBehaviour
             Debug.Log("АјАн!");
             player.UseEnergy();
             ShootBullet();
-            --_activeHeadCount;
+            --_activeEnergyCount;
+            _attacked = true;
         }
     }
 
@@ -71,5 +98,15 @@ public class PlayerAnalyze : StateMachineBehaviour
     {
         GameObject bullet = Instantiate(_bullet, _playerTransform.position, new Quaternion(0,0,0,0));
         bullet.AddComponent<Bullet>();
+    }
+
+    void OnOverclock()
+    {
+        _attackWaitTime *= _overclockWeight;
+    }
+
+    void OnOverclockEnd()
+    {
+        _attackWaitTime /= _overclockWeight;
     }
 }

@@ -3,37 +3,42 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
+using System;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private GameObject _snakeSprite;
     private int _defaultLength;
     [SerializeField] private int _maxLength;
-    private int _currentLength;
+    public int _currentLength;
     [SerializeField] private int _frameDelay;
 
-    private GameObject[] _heads;
+    private GameObject[] _energies;
     private Stack<bool> _energy;
 
+    public event Action OnOverclock;
+    public event Action OnOverclockEnd;
+    private bool _isOverclocking;
     private void Awake()
     {
         _defaultLength = 3;
         _currentLength = _defaultLength;
-        _heads = new GameObject[_maxLength];
-        _heads[0] = gameObject;
+        _energies = new GameObject[_maxLength];
+        _energies[0] = gameObject;
+        _isOverclocking = false;
 
         _energy = new Stack<bool>();
 
-        for(int i = 1; i < _maxLength; ++i)
+        for (int i = 1; i < _maxLength; ++i)
         {
             GameObject newHead = Instantiate(_snakeSprite, transform);
             newHead.name = $"Head{i}";
-            _heads[i] = newHead;
+            _energies[i] = newHead;
             Head headComponent = newHead.AddComponent<Head>();
             headComponent._frameDelay = _frameDelay;
-            headComponent._frontHead = _heads[i - 1].transform;
+            headComponent._frontHead = _energies[i - 1].transform;
         }
-        for(int i = _maxLength; i > _defaultLength; --i)
+        for (int i = _maxLength; i > _defaultLength; --i)
         {
             transform.GetChild(i - 2).gameObject.SetActive(false);
         }
@@ -41,34 +46,51 @@ public class Player : MonoBehaviour
 
     public void EarnEnergy()
     {
-        _currentLength++;
-        if(_currentLength > _maxLength)
+        if (_currentLength < _maxLength)
         {
-            _currentLength--;
-            return;
-        }
-        else
-        {
+            _currentLength++;
             transform.GetChild(_currentLength - 2).gameObject.SetActive(true);
             _energy.Push(true);
+        }
+
+        if(_currentLength == _maxLength)
+        {
+            Overclock();
         }
     }
 
     public bool IsEnergyCharged()
     {
-        if(_energy.Count > 0)
+        if (_energy.Count > 0)
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
+
     }
 
     public void UseEnergy()
     {
         _energy.Pop();
         _currentLength--;
+    }
+
+    private void Overclock()
+    {
+        if (!_isOverclocking)
+        {
+            OnOverclock?.Invoke();
+            _isOverclocking = true;
+            Debug.Log("오버클럭!");
+        }
+    }
+    public void EndOverclock()
+    {
+        if(_isOverclocking)
+        {
+            OnOverclockEnd?.Invoke();
+            _isOverclocking = false;
+            Debug.Log("오버클럭 해제");
+        }
     }
 }
