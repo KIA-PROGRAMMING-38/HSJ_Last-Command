@@ -104,10 +104,9 @@ public class Player : MonoBehaviour
 
     IEnumerator OnInvincible()
     {
-        WaitForSeconds wait = new WaitForSeconds(_invincibleTime);
         Debug.Log("公利 矫累");
         gameObject.layer = LayerMask.NameToLayer("Invincible");
-        yield return wait;
+        yield return new WaitForSeconds(_invincibleTime);
         Debug.Log("公利 场");
         gameObject.layer = LayerMask.NameToLayer("Player");
     }

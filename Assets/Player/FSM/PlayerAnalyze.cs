@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerAnalyze : StateMachineBehaviour
+public class PlayerAnalyze : PlayerState
 {
     private int _activeEnergyCount;
     private Transform _playerTransform;
-    public float Vertical;
-    public float Horizontal;
-    [SerializeField] private float _moveSpeed;
     [SerializeField] private GameObject _bullet;
+    [SerializeField] private float _moveSpeed;
 
     private float _attackStartTime;
     [SerializeField] private float _attackWaitTime;
@@ -43,14 +41,15 @@ public class PlayerAnalyze : StateMachineBehaviour
             _player.OnOverclockEnd -= OnOverclockEnd;
             _player.OnOverclockEnd += OnOverclockEnd;
         }
+        _playerMovement = animator.GetComponent<PlayerMovement>();
+        if (_playerMovement != null)
+        {
+            _playerMovement.ChangeState(this);
+        }
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Horizontal = Input.GetAxisRaw("Horizontal");
-        Vertical = Input.GetAxisRaw("Vertical");
-        _playerTransform.Translate(new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.deltaTime);
-
         if (_attackStartTime > _attackWaitTime)
         {
             Attack(animator.GetComponent<Player>());
@@ -108,5 +107,12 @@ public class PlayerAnalyze : StateMachineBehaviour
     void OnOverclockEnd()
     {
         _attackWaitTime /= _overclockWeight;
+    }
+
+    public override void Move(GameObject player)
+    {
+        float Horizontal = Input.GetAxisRaw("Horizontal");
+        float Vertical = Input.GetAxisRaw("Vertical");
+        player.transform.Translate(new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.fixedDeltaTime);
     }
 }

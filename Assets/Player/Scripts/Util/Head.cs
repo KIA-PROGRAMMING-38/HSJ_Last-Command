@@ -45,4 +45,11 @@ public class Head : MonoBehaviour
         _expectedPaths?.Clear();
         _targetPosition = _frontHead.position;
     }
+    public void ManipulateLocation()
+    {
+        if(_expectedPaths.Count > 0)
+        {
+            transform.position = (Vector3)_expectedPaths.Peek();
+        }
+    }
 }
