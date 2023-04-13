@@ -4,6 +4,8 @@ using UnityEngine;
 using Enum;
 using UnityEngine.Windows;
 using UnityEngine.Animations;
+using Unity.VisualScripting;
+using System.Runtime.CompilerServices;
 
 public class PlayerDash : StateMachineBehaviour
 {
@@ -12,6 +14,7 @@ public class PlayerDash : StateMachineBehaviour
     {
         PlayerInput input = animator.GetComponent<PlayerInput>();
         Transform playerTransform = animator.transform;
+
 
         switch (input._moveDirection)
         {

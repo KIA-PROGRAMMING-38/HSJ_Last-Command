@@ -12,11 +12,11 @@ public class Head : MonoBehaviour
 
     void OnEnable()
     {
-        if(_expectedPaths == null)
+        if (_expectedPaths == null)
         {
             _expectedPaths = new Queue<Vector2>();
         }
-        if(_frontHead != null)
+        if (_frontHead != null)
         {
             _targetPosition = _frontHead.position;
         }
@@ -26,8 +26,7 @@ public class Head : MonoBehaviour
     void FixedUpdate()
     {
         _expectedPaths.Enqueue(_frontHead.position);
-
-        if(_expectedPaths.Count > _frameDelay)
+        if (_expectedPaths.Count > _frameDelay)
         {
             _targetPosition = _expectedPaths.Dequeue();
         }
@@ -45,11 +44,14 @@ public class Head : MonoBehaviour
         _expectedPaths?.Clear();
         _targetPosition = _frontHead.position;
     }
-    public void ManipulateLocation()
+    public void ManipulateLocation(int repeatTime)
     {
-        if(_expectedPaths.Count > 0)
+        for (int i = 0; i < repeatTime; ++i)
         {
-            transform.position = (Vector3)_expectedPaths.Peek();
+            if (_expectedPaths.Count > 0)
+            {
+                transform.position = (Vector3)_expectedPaths.Dequeue();
+            }
         }
     }
 }

@@ -13,10 +13,24 @@ public class Block : MonoBehaviour
             || collision.gameObject.layer == LayerMask.NameToLayer("Invincible"))
         {
             GameObject player = collision.gameObject;
-            player.GetComponent<PlayerMovement>().CollideWithBlock();
+            bool isOnBlock = true;
+            int repeatFrame = 0;
+            while(isOnBlock)
+            {
+                Collider2D box = Physics2D.OverlapCircle(player.transform.position, player.GetComponent<CircleCollider2D>().radius, LayerMask.GetMask("Block"));
+                if(box != null)
+                {
+                    player.GetComponent<PlayerMovement>().CollideWithBlock();
+                    ++repeatFrame;
+                }
+                else
+                {
+                    isOnBlock = false;
+                }
+            }
             for(int i = 0;  i < player.transform.childCount; ++i)
             {
-                player.transform.GetChild(i).GetComponent<Head>().ManipulateLocation();
+                player.transform.GetChild(i).GetComponent<Head>().ManipulateLocation(repeatFrame);
             }
         }
     }
