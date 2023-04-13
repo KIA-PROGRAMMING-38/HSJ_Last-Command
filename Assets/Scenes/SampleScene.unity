@@ -1096,6 +1096,7 @@ MonoBehaviour:
   _maxLength: 6
   _currentLength: 0
   _frameDelay: 4
+  _invincibleTime: 2
 --- !u!95 &1495401873
 Animator:
   serializedVersion: 5

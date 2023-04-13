@@ -30,6 +30,7 @@ public class Boss : MonoBehaviour
                 _confirmedDamageGain += _temporaryDamageGain;
                 _temporaryDamageGain = 0;
                 _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
+                collision.GetComponent<Player>().Invincible();
             }
         }
 

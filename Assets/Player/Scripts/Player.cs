@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using System;
+using System.Runtime.CompilerServices;
 
 public class Player : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class Player : MonoBehaviour
     public event Action OnOverclock;
     public event Action OnOverclockEnd;
     private bool _isOverclocking;
+
+    [SerializeField] private float _invincibleTime;
+
     private void Awake()
     {
         _defaultLength = 3;
@@ -26,7 +30,6 @@ public class Player : MonoBehaviour
         _energies = new GameObject[_maxLength];
         _energies[0] = gameObject;
         _isOverclocking = false;
-
         _energy = new Stack<bool>();
 
         for (int i = 1; i < _maxLength; ++i)
@@ -53,7 +56,7 @@ public class Player : MonoBehaviour
             _energy.Push(true);
         }
 
-        if(_currentLength == _maxLength)
+        if (_currentLength == _maxLength)
         {
             Overclock();
         }
@@ -86,11 +89,26 @@ public class Player : MonoBehaviour
     }
     public void EndOverclock()
     {
-        if(_isOverclocking)
+        if (_isOverclocking)
         {
             OnOverclockEnd?.Invoke();
             _isOverclocking = false;
             Debug.Log("오버클럭 해제");
         }
+    }
+
+    public void Invincible()
+    {
+        StartCoroutine("OnInvincible");
+    }
+
+    IEnumerator OnInvincible()
+    {
+        WaitForSeconds wait = new WaitForSeconds(_invincibleTime);
+        Debug.Log("무적 시작");
+        gameObject.layer = LayerMask.NameToLayer("Invincible");
+        yield return wait;
+        Debug.Log("무적 끝");
+        gameObject.layer = LayerMask.NameToLayer("Player");
     }
 }
