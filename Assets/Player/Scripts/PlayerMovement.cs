@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Enum;
+using Util.Direction;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -26,23 +26,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public Vector2 CollideWithBlock(Vector2 position)
     {
-        switch(_input._moveDirection)
-        {
-            case Direction.Right:
-                position += Vector2.left * _bumpIntense;
-                break;
-            case Direction.Left:
-                position += Vector2.right * _bumpIntense;
-                break;
-            case Direction.Up:
-                position += Vector2.down * _bumpIntense;
-                break;
-            case Direction.Down:
-                position += Vector2.up * _bumpIntense;
-                break;
-            default:
-                break;
-        }
+        position += _input._playerDirection._moveDirection * -_bumpIntense;
         return position;
     }
 }

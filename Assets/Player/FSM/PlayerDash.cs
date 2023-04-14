@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Enum;
 using UnityEngine.Windows;
 using UnityEngine.Animations;
 using Unity.VisualScripting;
@@ -18,23 +17,7 @@ public class PlayerDash : StateMachineBehaviour
         Vector2 _expectedDashPoint = Vector2.zero;
         Vector2 _expectedDashAmount = Vector2.zero;
 
-        switch (input._moveDirection)
-        {
-            case Direction.Right:
-                _expectedDashAmount = (Vector3)Vector2.right * _dashDistance;
-                break;
-            case Direction.Left:
-                _expectedDashAmount = (Vector3)Vector2.left * _dashDistance;
-                break;
-            case Direction.Up:
-                _expectedDashAmount = (Vector3)Vector2.up * _dashDistance;
-                break;
-            case Direction.Down:
-                _expectedDashAmount = (Vector3)Vector2.down * _dashDistance;
-                break;
-            default:
-                break;
-        }
+        _expectedDashAmount = input._playerDirection._moveDirection * _dashDistance;
         _expectedDashPoint = (Vector2)playerTransform.position + _expectedDashAmount;
         
         bool isOnBlock = true;
@@ -43,23 +26,7 @@ public class PlayerDash : StateMachineBehaviour
             Collider2D box = Physics2D.OverlapCircle(_expectedDashPoint, animator.GetComponent<CircleCollider2D>().radius, LayerMask.GetMask("Block"));
             if (box != null)
             {
-                    switch (input._moveDirection)
-                    {
-                        case Direction.Right:
-                        _expectedDashPoint += Vector2.left * _bumpDistance;
-                            break;
-                        case Direction.Left:
-                        _expectedDashPoint += Vector2.right * _bumpDistance;
-                        break;
-                        case Direction.Up:
-                        _expectedDashPoint += Vector2.down * _bumpDistance;
-                        break;
-                        case Direction.Down:
-                        _expectedDashPoint += Vector2.up * _bumpDistance;
-                        break;
-                        default:
-                            break;
-                    }
+                _expectedDashPoint += input._playerDirection._moveDirection * -_bumpDistance;
             }
             else
             {

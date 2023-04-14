@@ -7,8 +7,7 @@ public class Energy : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Player")
-            || collision.gameObject.layer == LayerMask.NameToLayer("Invincible"))
+        if(collision.gameObject.GetComponent<Player>() != null)
         {
             Player player = collision.gameObject.GetComponent<Player>();
             player.EarnEnergy();

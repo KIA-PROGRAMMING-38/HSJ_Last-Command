@@ -1,4 +1,3 @@
-using Enum;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -9,8 +8,7 @@ public class Block : MonoBehaviour
 {
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player")
-            || collision.gameObject.layer == LayerMask.NameToLayer("Invincible"))
+        if (collision.gameObject.GetComponent<Player>() != null)
         {
             GameObject player = collision.gameObject;
             player.transform.position = player.GetComponent<PlayerMovement>().CollideWithBlock(player.transform.position);
