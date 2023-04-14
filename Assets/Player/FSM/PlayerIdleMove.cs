@@ -29,8 +29,11 @@ public class PlayerIdleMove : PlayerState
     }
     private void OnDestroy()
     {
-        _player.OnOverclock -= OnOverclock;
-        _player.OnOverclockEnd -= OnOverclockEnd;
+        if(_player != null)
+        {
+            _player.OnOverclock -= OnOverclock;
+            _player.OnOverclockEnd -= OnOverclockEnd;
+        }
     }
 
     private void OnOverclock()

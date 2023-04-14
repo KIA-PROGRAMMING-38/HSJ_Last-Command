@@ -15,6 +15,8 @@ public class Boss : MonoBehaviour
     private float _elapsedTime;
 
     [SerializeField] private int _hp;
+
+    public event Action OnAttackSuccess;
     void Awake()
     {
         GameManager._instance._boss = gameObject;
@@ -73,5 +75,10 @@ public class Boss : MonoBehaviour
                 _elapsedTime += Time.deltaTime;
             }
         }
+    }
+    public void Damaged()
+    {
+        _hp--;
+        OnAttackSuccess?.Invoke();
     }
 }

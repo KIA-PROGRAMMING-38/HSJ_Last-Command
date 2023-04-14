@@ -28,6 +28,7 @@ public class BossGroggy : StateMachineBehaviour
         {
             animator.SetBool("isGroggy", false);
             Debug.Log("АјАн!");
+            animator.GetComponent<Boss>().Damaged();
         }
 
         _elapsedTime += Time.deltaTime;
