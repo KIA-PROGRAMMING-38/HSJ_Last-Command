@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.Pool;
 public class PlayerAnalyze : PlayerState
 {
     private int _activeEnergyCount;
@@ -13,10 +13,14 @@ public class PlayerAnalyze : PlayerState
     private float _attackStartTime;
     [SerializeField] private float _attackWaitTime;
     [SerializeField] private float _overclockWeight;
-    private Player _player;
+    
     private bool _attacked;
+    private GameObject _followingHead;
+
+    private IObjectPool<Bullet> _pool;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        InitiatePool();
         _playerTransform = animator.transform;
         _attackStartTime = 0;
         _attacked = false;
@@ -24,12 +28,12 @@ public class PlayerAnalyze : PlayerState
         _activeEnergyCount = 0;
         for (int i = 0; i < _playerTransform.childCount; ++i)
         {
-            GameObject followingHead = _playerTransform.GetChild(i).gameObject;
-            followingHead.transform.localPosition = new Vector2(0, 0);
-            if (followingHead.activeSelf)
+            _followingHead = _playerTransform.GetChild(i).gameObject;
+            _followingHead.transform.localPosition = new Vector2(0, 0);
+            if (_followingHead.activeSelf)
             {
                 ++_activeEnergyCount;
-                followingHead.SetActive(false);
+                _followingHead.SetActive(false);
             }
         }
         _player = animator.GetComponent<Player>();
@@ -41,10 +45,10 @@ public class PlayerAnalyze : PlayerState
             _player.OnOverclockEnd -= OnOverclockEnd;
             _player.OnOverclockEnd += OnOverclockEnd;
         }
-        _playerMovement = animator.GetComponent<PlayerMovement>();
-        if (_playerMovement != null)
+        _movement = animator.GetComponent<PlayerMovement>();
+        if (_movement != null)
         {
-            _playerMovement.ChangeState(this);
+            _movement.ChangeState(this);
         }
     }
 
@@ -65,8 +69,7 @@ public class PlayerAnalyze : PlayerState
     {
         for (int i = 0; i < _activeEnergyCount; ++i)
         {
-            GameObject activeEnergy = _playerTransform.GetChild(i).gameObject;
-            activeEnergy.SetActive(true);
+            _playerTransform.GetChild(i).gameObject.SetActive(true);
         }
         if(_attacked)
         {
@@ -87,17 +90,12 @@ public class PlayerAnalyze : PlayerState
         {
             Debug.Log("АјАн!");
             player.UseEnergy();
-            ShootBullet();
+            Bullet bullet = _pool.Get();
             --_activeEnergyCount;
             _attacked = true;
         }
     }
 
-    void ShootBullet()
-    {
-        GameObject bullet = Instantiate(_bullet, _playerTransform.position, new Quaternion(0,0,0,0));
-        bullet.AddComponent<Bullet>();
-    }
 
     void OnOverclock()
     {
@@ -114,5 +112,33 @@ public class PlayerAnalyze : PlayerState
         float Horizontal = Input.GetAxisRaw("Horizontal");
         float Vertical = Input.GetAxisRaw("Vertical");
         player.transform.Translate(new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.fixedDeltaTime);
+    }
+
+    private void InitiatePool()
+    { 
+        if(_pool == null)
+        {
+            _pool = new ObjectPool<Bullet>(ShootBullet,OnGetBullet,OnReleaseBullet,OnDestroyBullet, maxSize : 5);
+        }
+    }
+
+    private Bullet ShootBullet()
+    {
+        Bullet bullet = Instantiate(_bullet, _playerTransform.position, _playerTransform.rotation).AddComponent<Bullet>();
+        bullet.SetPool(_pool);
+        return bullet;
+    }
+    private void OnGetBullet(Bullet bullet)
+    {
+        bullet.gameObject.SetActive(true);
+    }
+
+    private void OnReleaseBullet(Bullet bullet)
+    {
+        bullet.gameObject.SetActive(false);
+    }
+    private void OnDestroyBullet(Bullet bullet)
+    {
+        Destroy(bullet.gameObject);
     }
 }

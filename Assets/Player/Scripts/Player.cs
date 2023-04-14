@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        GameManager._instance._player = gameObject;
         _defaultLength = 3;
         _currentLength = _defaultLength;
         _energies = new GameObject[_maxLength];

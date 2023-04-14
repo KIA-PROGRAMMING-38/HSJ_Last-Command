@@ -6,32 +6,31 @@ public class PlayerIdleMove : PlayerState
     private Vector3 _moveVector = Vector2.right;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _overclockWeight;
-    private Player _player;
-    private PlayerInput _input;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _input = animator.GetComponent<PlayerInput>();
-        _player = animator.GetComponent<Player>();
-        _playerMovement = animator.GetComponent<PlayerMovement>();
-        if (_playerMovement != null)
+        if (_input == null)
         {
-            _playerMovement.ChangeState(this);
+            _input = animator.GetComponent<PlayerInput>();
         }
-        if (_player != null)
+        if (_player == null)
         {
-            _player.OnOverclock -= OnOverclock;
-            _player.OnOverclock += OnOverclock;
-            _player.OnOverclockEnd -= OnOverclockEnd;
-            _player.OnOverclockEnd += OnOverclockEnd;
+            _player = animator.GetComponent<Player>();
         }
+        _player.OnOverclock -= OnOverclock;
+        _player.OnOverclock += OnOverclock;
+        _player.OnOverclockEnd -= OnOverclockEnd;
+        _player.OnOverclockEnd += OnOverclockEnd;
+
+        if (_movement == null)
+        {
+            _movement = animator.GetComponent<PlayerMovement>();
+        }
+        _movement?.ChangeState(this);
     }
     private void OnDestroy()
     {
-        if (_player != null)
-        {
-            _player.OnOverclock -= OnOverclock;
-            _player.OnOverclockEnd -= OnOverclockEnd;
-        }
+        _player.OnOverclock -= OnOverclock;
+        _player.OnOverclockEnd -= OnOverclockEnd;
     }
 
     private void OnOverclock()

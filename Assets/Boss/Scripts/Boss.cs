@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,10 +11,9 @@ public class Boss : MonoBehaviour
 
     [SerializeField] private float _diminishingTime;
     private float _elapsedTime;
-
     void Awake()
     {
-        gameObject.tag = "Boss";
+        GameManager._instance._boss = gameObject;
         _temporaryDamageGain = 0;
         _confirmedDamageGain = 0;
         _totalDamageGain = 0;
@@ -38,7 +38,6 @@ public class Boss : MonoBehaviour
         {
             Debug.Log("임시피해 5!");
             _temporaryDamageGain += 5;
-            collision.gameObject.SetActive(false);
             _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
         }
 
