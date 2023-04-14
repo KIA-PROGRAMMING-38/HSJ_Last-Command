@@ -44,14 +44,12 @@ public class Head : MonoBehaviour
         _expectedPaths?.Clear();
         _targetPosition = _frontHead.position;
     }
-    public void ManipulateLocation(int repeatTime)
+    public void ManipulateLocation()
     {
-        for (int i = 0; i < repeatTime; ++i)
+        if (_expectedPaths.Count > 0)
         {
-            if (_expectedPaths.Count > 0)
-            {
-                transform.position = (Vector3)_expectedPaths.Dequeue();
-            }
+            transform.position = (Vector3)_expectedPaths.Dequeue();
         }
+
     }
 }

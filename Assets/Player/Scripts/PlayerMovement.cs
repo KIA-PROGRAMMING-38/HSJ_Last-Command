@@ -24,24 +24,25 @@ public class PlayerMovement : MonoBehaviour
     {
         _currentState = changedState;
     }
-    public void CollideWithBlock()
+    public Vector2 CollideWithBlock(Vector2 position)
     {
         switch(_input._moveDirection)
         {
             case Direction.Right:
-                gameObject.transform.position += (Vector3)Vector2.left * _bumpIntense;
+                position += Vector2.left * _bumpIntense;
                 break;
             case Direction.Left:
-                gameObject.transform.position += (Vector3)Vector2.right * _bumpIntense;
+                position += Vector2.right * _bumpIntense;
                 break;
             case Direction.Up:
-                gameObject.transform.position += (Vector3)Vector2.down * _bumpIntense;
+                position += Vector2.down * _bumpIntense;
                 break;
             case Direction.Down:
-                gameObject.transform.position += (Vector3)Vector2.up * _bumpIntense;
+                position += Vector2.up * _bumpIntense;
                 break;
             default:
                 break;
         }
+        return position;
     }
 }

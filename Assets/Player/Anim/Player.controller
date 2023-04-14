@@ -197,6 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dashDistance: 3
+  _bumpDistance: 0.5
 --- !u!1101 &1187868588537587236
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
