@@ -17,7 +17,7 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private float _dashWaitTime;
     private float _lastDashTime;
     private bool _isDashNoticed;
-    
+  
     private void Awake()
     {
         _playerDirection = _right;
@@ -27,7 +27,6 @@ public class PlayerInput : MonoBehaviour
 
     private void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             _playerDirection = _right;

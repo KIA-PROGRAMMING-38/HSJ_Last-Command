@@ -9,8 +9,12 @@ public class Boss : MonoBehaviour
     private int _confirmedDamageGain;
     private int _totalDamageGain;
 
+    [SerializeField] private int _damageTreshold;
+
     [SerializeField] private float _diminishingTime;
     private float _elapsedTime;
+
+    [SerializeField] private int _hp;
     void Awake()
     {
         GameManager._instance._boss = gameObject;
@@ -44,6 +48,14 @@ public class Boss : MonoBehaviour
         Debug.Log($"현재 임시 피해 : {_temporaryDamageGain}");
         Debug.Log($"현재 확정 피해 : {_confirmedDamageGain}");
         Debug.Log($"총 피해 : {_totalDamageGain}");
+        if(_totalDamageGain >= _damageTreshold)
+        {
+            GetComponent<Animator>().SetBool("isGroggy",true);
+            transform.GetChild(1).gameObject.SetActive(true);
+            _totalDamageGain = 0;
+            _temporaryDamageGain = 0;
+            _confirmedDamageGain = 0;
+        }
     }
 
     private void Update()
