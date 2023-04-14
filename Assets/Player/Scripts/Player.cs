@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 
 public class Player : MonoBehaviour
 {
+    private GameObject _boss;
     [SerializeField] private GameObject _snakeSprite;
     private int _defaultLength;
     [SerializeField] private int _maxLength;
@@ -26,6 +27,20 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         GameManager._instance._player = gameObject;
+        if(GameManager._instance._boss == null)
+        {
+            _boss = GameObject.FindWithTag("Boss");
+        }
+        else
+        {
+            _boss = GameManager._instance._boss;
+        }
+
+        if(_boss != null)
+        {
+            _boss.GetComponent<Boss>().OnConfChange -= Invincible;
+            _boss.GetComponent<Boss>().OnConfChange += Invincible;
+        }
         _defaultLength = 3;
         _currentLength = _defaultLength;
         _energies = new GameObject[_maxLength];
@@ -47,7 +62,13 @@ public class Player : MonoBehaviour
             transform.GetChild(i - 2).gameObject.SetActive(false);
         }
     }
-
+    private void OnDestroy()
+    {
+        if (_boss != null)
+        {
+            _boss.GetComponent<Boss>().OnConfChange -= Invincible;
+        }
+    }
     public void EarnEnergy()
     {
         if (_currentLength < _maxLength)

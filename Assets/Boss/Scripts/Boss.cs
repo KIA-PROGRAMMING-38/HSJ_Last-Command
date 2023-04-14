@@ -2,14 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
 {
-    private int _temporaryDamageGain;
-    private int _confirmedDamageGain;
-    private int _totalDamageGain;
+    public int _temporaryDamageGain { get; private set; }
+    public int _confirmedDamageGain { get; private set; }
+    public int _totalDamageGain { get; private set; }
 
-    [SerializeField] private int _damageTreshold;
+    [SerializeField] private float _damageTreshold;
 
     [SerializeField] private float _diminishingTime;
     private float _elapsedTime;
@@ -17,6 +18,11 @@ public class Boss : MonoBehaviour
     [SerializeField] private int _hp;
 
     public event Action OnAttackSuccess;
+
+    public event Action OnTempChange;
+    public event Action OnConfChange;
+    public event Action OnGroggy;
+
     void Awake()
     {
         GameManager._instance._boss = gameObject;
@@ -32,31 +38,22 @@ public class Boss : MonoBehaviour
         {
             if(_temporaryDamageGain > 0)
             {
-                Debug.Log("임시를 확정으로");
-                _confirmedDamageGain += _temporaryDamageGain;
-                _temporaryDamageGain = 0;
-                _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
-                collision.GetComponent<Player>().Invincible();
+                ChangeDamageType();
             }
         }
 
         if(collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
-            Debug.Log("임시피해 5!");
-            _temporaryDamageGain += 5;
-            _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
+            GetTempDamage();
         }
 
         Debug.Log($"현재 임시 피해 : {_temporaryDamageGain}");
         Debug.Log($"현재 확정 피해 : {_confirmedDamageGain}");
         Debug.Log($"총 피해 : {_totalDamageGain}");
+
         if(_totalDamageGain >= _damageTreshold)
         {
-            GetComponent<Animator>().SetBool("isGroggy",true);
-            transform.GetChild(1).gameObject.SetActive(true);
-            _totalDamageGain = 0;
-            _temporaryDamageGain = 0;
-            _confirmedDamageGain = 0;
+            EnterGroggyState();
         }
     }
 
@@ -66,9 +63,7 @@ public class Boss : MonoBehaviour
         {
             if(_elapsedTime >= _diminishingTime)
             {
-                _temporaryDamageGain--;
-                _elapsedTime = 0;
-                Debug.Log($"현재 임시 피해 : {_temporaryDamageGain}");
+                DecreaseTempDamage();
             }
             else
             {
@@ -80,5 +75,44 @@ public class Boss : MonoBehaviour
     {
         _hp--;
         OnAttackSuccess?.Invoke();
+    }
+
+    private void ChangeDamageType()
+    {
+        Debug.Log("임시를 확정으로");
+        _confirmedDamageGain += _temporaryDamageGain;
+        _temporaryDamageGain = 0;
+        _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
+        OnConfChange?.Invoke();
+    }
+
+    private void GetTempDamage()
+    {
+        Debug.Log("임시피해 5!");
+        _temporaryDamageGain += 5;
+        _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
+        OnTempChange?.Invoke();
+    }
+
+    private void DecreaseTempDamage()
+    {
+        _temporaryDamageGain--;
+        _elapsedTime = 0;
+        Debug.Log($"현재 임시 피해 : {_temporaryDamageGain}");
+        OnTempChange?.Invoke();
+    }
+
+    private void EnterGroggyState()
+    {
+        GetComponent<Animator>().SetBool("isGroggy", true);
+        transform.Find("Circle").gameObject.SetActive(true);
+        _totalDamageGain = 0;
+        _temporaryDamageGain = 0;
+        _confirmedDamageGain = 0;
+        OnGroggy?.Invoke();
+    }
+    public float GetTreshold()
+    {
+        return _damageTreshold;
     }
 }

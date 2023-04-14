@@ -1,18 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
-public class CreatedEnergy : MonoBehaviour
+public class CreatedEnergy : Energy
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public event Func<Transform> OnRespawn;
 
-    // Update is called once per frame
-    void Update()
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        base.OnTriggerEnter2D(collision);
+        transform.position = OnRespawn.Invoke().position;
+        gameObject.SetActive(true);
     }
 }

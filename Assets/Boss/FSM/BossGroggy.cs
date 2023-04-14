@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,11 +10,14 @@ public class BossGroggy : StateMachineBehaviour
     private float _elapsedTime;
     private AttackZone _attackZone;
     private bool _isOnZone;
+
+    public event Action OnGroggyEnd;
+
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if(_attackZone == null)
         {
-            _attackZone = animator.transform.GetChild(1).gameObject.GetComponent<AttackZone>();
+            _attackZone = animator.transform.Find("Circle").gameObject.GetComponent<AttackZone>();
         }
         _attackZone.OnZone -= isOnZone;
         _attackZone.OffZone -= isOffZone;
@@ -29,6 +33,7 @@ public class BossGroggy : StateMachineBehaviour
             animator.SetBool("isGroggy", false);
             Debug.Log("공격!");
             animator.GetComponent<Boss>().Damaged();
+            OnGroggyEnd?.Invoke();
         }
 
         _elapsedTime += Time.deltaTime;
@@ -36,6 +41,7 @@ public class BossGroggy : StateMachineBehaviour
         if(_elapsedTime >= _groggyTime)
         {
             animator.SetBool("isGroggy", false);
+            OnGroggyEnd?.Invoke();
             Debug.Log("그로기 끝..");
         }
     }
@@ -43,7 +49,7 @@ public class BossGroggy : StateMachineBehaviour
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.transform.GetChild(1).gameObject.SetActive(false);
+        animator.transform.Find("Circle").gameObject.SetActive(false);
     }
 
     private void OnDestroy()

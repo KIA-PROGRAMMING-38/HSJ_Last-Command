@@ -5,7 +5,7 @@ using UnityEngine.Pool;
 
 public class Energy : MonoBehaviour
 {
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.GetComponent<Player>() != null)
         {

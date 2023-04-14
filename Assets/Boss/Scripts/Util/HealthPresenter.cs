@@ -24,17 +24,17 @@ public class HealthPresenter : MonoBehaviour
         _index = 0;
     }
 
-    private void HpDecrease()
-    {
-        _images[_index].SetActive(false);
-        ++_index;
-    }
-
     private void OnDestroy()
     {
         if (_boss != null)
         {
             _boss.GetComponent<Boss>().OnAttackSuccess -= HpDecrease;
         }
+    }
+
+    private void HpDecrease()
+    {
+        _images[_index].SetActive(false);
+        ++_index;
     }
 }

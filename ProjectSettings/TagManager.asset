@@ -42,9 +42,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Boss
+  - name: Heart Background
     uniqueID: 2773196331
     locked: 0
-  - name: Player
+  - name: Heart(None)
     uniqueID: 325871099
+    locked: 0
+  - name: Heart(Temp)
+    uniqueID: 724829123
+    locked: 0
+  - name: Heart(Conf)
+    uniqueID: 191278415
+    locked: 0
+  - name: Player
+    uniqueID: 2656520177
     locked: 0

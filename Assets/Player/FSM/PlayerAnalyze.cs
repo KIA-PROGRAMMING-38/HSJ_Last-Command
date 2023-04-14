@@ -13,7 +13,7 @@ public class PlayerAnalyze : PlayerState
     private float _attackStartTime;
     [SerializeField] private float _attackWaitTime;
     [SerializeField] private float _overclockWeight;
-    
+
     private bool _attacked;
     private GameObject _followingHead;
 
@@ -38,7 +38,7 @@ public class PlayerAnalyze : PlayerState
         }
         _player = animator.GetComponent<Player>();
 
-        if(_player != null)
+        if (_player != null)
         {
             _player.OnOverclock -= OnOverclock;
             _player.OnOverclock += OnOverclock;
@@ -71,7 +71,7 @@ public class PlayerAnalyze : PlayerState
         {
             _playerTransform.GetChild(i).gameObject.SetActive(true);
         }
-        if(_attacked)
+        if (_attacked)
         {
             _player.EndOverclock();
         }
@@ -86,7 +86,7 @@ public class PlayerAnalyze : PlayerState
     }
     void Attack(Player player)
     {
-        if(player.IsEnergyCharged())
+        if (player.IsEnergyCharged())
         {
             Debug.Log("АјАн!");
             player.UseEnergy();
@@ -115,10 +115,10 @@ public class PlayerAnalyze : PlayerState
     }
 
     private void InitiatePool()
-    { 
-        if(_pool == null)
+    {
+        if (_pool == null)
         {
-            _pool = new ObjectPool<Bullet>(ShootBullet,OnGetBullet,OnReleaseBullet,OnDestroyBullet, maxSize : 5);
+            _pool = new ObjectPool<Bullet>(ShootBullet, OnGetBullet, OnReleaseBullet, OnDestroyBullet, maxSize: 5);
         }
     }
 
