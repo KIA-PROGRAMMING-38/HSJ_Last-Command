@@ -11,7 +11,10 @@ public class CreatedEnergy : Energy
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
-        transform.position = OnRespawn.Invoke().position;
-        gameObject.SetActive(true);
+        if (collision.gameObject.GetComponent<Player>() != null)
+        {
+            transform.position = OnRespawn.Invoke().position;
+            gameObject.SetActive(true);
+        }
     }
 }
