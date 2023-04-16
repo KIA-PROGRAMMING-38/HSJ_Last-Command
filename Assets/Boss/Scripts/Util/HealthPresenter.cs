@@ -6,22 +6,28 @@ using UnityEngine;
 public class HealthPresenter : MonoBehaviour
 {
     private GameObject _boss;
-    [SerializeField] private GameObject[] _images;
-    private int _index;
+    private GameObject _player;
+    [SerializeField] private GameObject[] _images1;
+    [SerializeField] private GameObject[] _images2;
+    private int _index1;
+    private int _index2;
 
     private void Awake()
     {
         if (GameManager._instance?._boss == null)
         {
             _boss = GameObject.FindWithTag("Boss");
+            _player = GameObject.FindWithTag("Player");
         }
         else
         {
             _boss = GameManager._instance._boss;
+            _player = GameManager._instance._player;
         }
         _boss.GetComponent<Boss>().OnAttackSuccess -= HpDecrease;
         _boss.GetComponent<Boss>().OnAttackSuccess += HpDecrease;
-        _index = 0;
+        _player.GetComponent<Player>().OnHpDecrease -= HpDecrease2;
+        _player.GetComponent<Player>().OnHpDecrease += HpDecrease2;
     }
 
     private void OnDestroy()
@@ -30,11 +36,20 @@ public class HealthPresenter : MonoBehaviour
         {
             _boss.GetComponent<Boss>().OnAttackSuccess -= HpDecrease;
         }
+        if(_player != null)
+        {
+            _player.GetComponent<Player>().OnHpDecrease -= HpDecrease2;
+        }
     }
 
     private void HpDecrease()
     {
-        _images[_index].SetActive(false);
-        ++_index;
+        _images1[_index1].SetActive(false);
+        ++_index1;
+    }
+    private void HpDecrease2()
+    {
+        _images2[_index2].SetActive(false);
+        ++_index2;
     }
 }

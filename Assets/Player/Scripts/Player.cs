@@ -23,6 +23,8 @@ public class Player : MonoBehaviour
     private bool _isOverclocking;
 
     [SerializeField] private float _invincibleTime;
+    private int _Hp;
+    public event Action OnHpDecrease;
 
     private void Awake()
     {
@@ -131,5 +133,12 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(_invincibleTime);
         Debug.Log("¹«Àû ³¡");
         gameObject.layer = LayerMask.NameToLayer("Player");
+    }
+
+    public void Damaged()
+    {
+        OnHpDecrease?.Invoke();
+        _Hp--;
+        Invincible();
     }
 }
