@@ -5,9 +5,14 @@ using UnityEngine;
 
 public class Missle1 : Missle
 {
+    private Vector3 _direction;
+    private void OnEnable()
+    {
+        _direction = transform.TransformDirection(Vector3.left);
+    }
     private void FixedUpdate()
     {
-        transform.position += (Vector3)(Vector2.left * Time.fixedDeltaTime);
+        transform.position += _direction * Time.fixedDeltaTime;
     }
 
     protected override void ReturnMissle()

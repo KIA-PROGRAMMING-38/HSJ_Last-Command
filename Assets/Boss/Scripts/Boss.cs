@@ -15,13 +15,14 @@ public class Boss : MonoBehaviour
     [SerializeField] private float _diminishingTime;
     private float _elapsedTime;
 
-    [SerializeField] private int _hp;
+    [SerializeField] private int _Hp;
 
     public event Action OnAttackSuccess;
 
     public event Action OnTempChange;
     public event Action OnConfChange;
     public event Action OnGroggy;
+    public event Action OnDie;
 
     void Awake()
     {
@@ -73,7 +74,12 @@ public class Boss : MonoBehaviour
     }
     public void Damaged()
     {
-        _hp--;
+        _Hp--;
+        if(_Hp <= 0)
+        {
+            OnDie?.Invoke();
+            return;
+        }
         OnAttackSuccess?.Invoke();
     }
 

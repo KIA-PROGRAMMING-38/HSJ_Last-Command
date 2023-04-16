@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class Missle2 : Missle
 {
-    float tense = 2f;
-    float frequency = 4f;
+    private float tense = 2f;
+    private float frequency = 4f;
+    private Vector3 _xDirection;
+    private Vector3 _yDirection;
 
+    private void OnEnable()
+    {
+        _xDirection = transform.TransformDirection(Vector3.left);
+        _yDirection = transform.TransformDirection(Vector3.up);
+    }
     void FixedUpdate()
     {
         float yMovement = Mathf.Sin(Time.time * frequency) * tense;
-        transform.position += (Vector3)(Vector2.right * Time.fixedDeltaTime + Vector2.up * yMovement * Time.fixedDeltaTime);
+        transform.position += _xDirection * Time.fixedDeltaTime + _yDirection * yMovement * Time.fixedDeltaTime;
     }
 
     protected override void ReturnMissle()

@@ -23,8 +23,9 @@ public class Player : MonoBehaviour
     private bool _isOverclocking;
 
     [SerializeField] private float _invincibleTime;
-    private int _Hp;
+    [SerializeField] private int _Hp;
     public event Action OnHpDecrease;
+    public event Action OnDie;
 
     private void Awake()
     {
@@ -137,8 +138,13 @@ public class Player : MonoBehaviour
 
     public void Damaged()
     {
-        OnHpDecrease?.Invoke();
         _Hp--;
+        if(_Hp <= 0)
+        {
+            OnDie?.Invoke();
+            return;
+        }
+        OnHpDecrease?.Invoke();
         Invincible();
     }
 }

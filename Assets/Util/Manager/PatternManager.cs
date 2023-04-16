@@ -42,6 +42,7 @@ public class PatternManager : MonoBehaviour
     {
         int randomPosition = UnityEngine.Random.Range(0, _patternSpawnPoint[_currentPattern].Length);
         missle.gameObject.transform.position = _patternSpawnPoint[_currentPattern][randomPosition].position;
+        missle.gameObject.transform.rotation = _patternSpawnPoint[_currentPattern][randomPosition].rotation;
         missle.gameObject.SetActive(true);
         _currentMissles.Add(missle);
     }
