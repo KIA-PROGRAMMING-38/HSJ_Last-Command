@@ -32,7 +32,7 @@ public class PatternManager : MonoBehaviour
 
     private void InitiatePattern()
     {
-        _pool = new ObjectPool<Missle>(StartPattern, OnGetMissle, OnReleaseMissle, OnDestroyMissle, maxSize: 10);
+        _pool = new ObjectPool<Missle>(StartPattern, OnGetMissle, OnReleaseMissle, OnDestroyMissle, maxSize: 20);
     }
     private Missle StartPattern()
     {
