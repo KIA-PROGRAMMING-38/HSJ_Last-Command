@@ -6,13 +6,15 @@ using UnityEngine.Pool;
 
 public class Bullet : MonoBehaviour
 {
-    private GameObject _boss;
-    private GameObject _player;
+    private ObjectManager _objectManager;
+
+    private Player _player;
+    private Boss _boss;
 
     private Vector2 _bossPosition;
     private Vector2 _waypointPosition;
     private float _waypointRadius;
-    
+
     private float _lerpSpeed1;
     private float _lerpSpeed2;
     private float _moveTime;
@@ -74,12 +76,14 @@ public class Bullet : MonoBehaviour
     }
     private void InitialSettings()
     {
-        _boss = GameManager._instance._boss;
-        _player = GameManager._instance._player;
+        _objectManager = gameObject.GetComponentInParent<Player>()._objectManager;
+        _boss = _objectManager._boss;
+        _player = _objectManager._player;
         _waypointRadius = 1;
         _lerpSpeed1 = 20f;
         _lerpSpeed2 = 50f;
         _coroutineWaitTime = 0.5f;
+        transform.SetParent(default);
     }
 
     public void SetPool(IObjectPool<Bullet> pool)
@@ -89,5 +93,9 @@ public class Bullet : MonoBehaviour
     private void ReturnBullet()
     {
         _currentPool.Release(this);
+    }
+    public void Init(ObjectManager objectManager)
+    {
+        _objectManager = objectManager;
     }
 }

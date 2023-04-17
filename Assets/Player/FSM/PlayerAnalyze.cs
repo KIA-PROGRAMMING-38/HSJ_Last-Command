@@ -20,12 +20,13 @@ public class PlayerAnalyze : PlayerState
     private IObjectPool<Bullet> _pool;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        InitSettings(animator);
         InitiatePool();
-        _playerTransform = animator.transform;
+        _playerTransform = _player.transform;
         _attackStartTime = 0;
         _attacked = false;
-
         _activeEnergyCount = 0;
+
         for (int i = 0; i < _playerTransform.childCount; ++i)
         {
             _followingHead = _playerTransform.GetChild(i).gameObject;
@@ -36,7 +37,6 @@ public class PlayerAnalyze : PlayerState
                 _followingHead.SetActive(false);
             }
         }
-        _player = animator.GetComponent<Player>();
 
         if (_player != null)
         {
@@ -45,7 +45,6 @@ public class PlayerAnalyze : PlayerState
             _player.OnOverclockEnd -= OnOverclockEnd;
             _player.OnOverclockEnd += OnOverclockEnd;
         }
-        _movement = animator.GetComponent<PlayerMovement>();
         if (_movement != null)
         {
             _movement.ChangeState(this);
@@ -56,7 +55,7 @@ public class PlayerAnalyze : PlayerState
     {
         if (_attackStartTime > _attackWaitTime)
         {
-            Attack(animator.GetComponent<Player>());
+            Attack();
             _attackStartTime = 0;
         }
         else
@@ -84,12 +83,12 @@ public class PlayerAnalyze : PlayerState
             _player.OnOverclockEnd -= OnOverclockEnd;
         }
     }
-    void Attack(Player player)
+    void Attack()
     {
-        if (player.IsEnergyCharged())
+        if (_player.IsEnergyCharged())
         {
             Debug.Log("АјАн!");
-            player.UseEnergy();
+            _player.UseEnergy();
             Bullet bullet = _pool.Get();
             --_activeEnergyCount;
             _attacked = true;
@@ -107,11 +106,11 @@ public class PlayerAnalyze : PlayerState
         _attackWaitTime /= _overclockWeight;
     }
 
-    public override void Move(GameObject player)
+    public override void Move()
     {
         float Horizontal = Input.GetAxisRaw("Horizontal");
         float Vertical = Input.GetAxisRaw("Vertical");
-        player.transform.Translate(new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.fixedDeltaTime);
+        _player.transform.Translate(new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.fixedDeltaTime);
     }
 
     private void InitiatePool()
@@ -124,7 +123,7 @@ public class PlayerAnalyze : PlayerState
 
     private Bullet ShootBullet()
     {
-        Bullet bullet = Instantiate(_bullet, _playerTransform.position, _playerTransform.rotation).AddComponent<Bullet>();
+        Bullet bullet = Instantiate(_bullet, _playerTransform).AddComponent<Bullet>();
         bullet.SetPool(_pool);
         return bullet;
     }

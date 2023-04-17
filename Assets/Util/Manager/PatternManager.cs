@@ -6,7 +6,7 @@ using System;
 
 public class PatternManager : MonoBehaviour
 {
-    [SerializeField] private Boss _boss;
+    public GameManager _gameManager { get; private set; }
 
     private ObjectPool<Missle> _pool;
     private List<Missle> _currentMissles = new List<Missle>();
@@ -15,6 +15,11 @@ public class PatternManager : MonoBehaviour
     [SerializeField] private GameObject[] _misslePrefabs;
     [SerializeField] private float _spawnTime;
     private int _currentPattern;
+
+    public void Init(GameManager gameManager)
+    {
+        _gameManager = gameManager;
+    }
     private void Awake()
     {
         _currentPattern = 0;
@@ -23,8 +28,6 @@ public class PatternManager : MonoBehaviour
         InitiatePattern();
         _pattern[_currentPattern] = Pattern();
         StartCoroutine(_pattern[_currentPattern]);
-        _boss.OnAttackSuccess -= ChangePattern;
-        _boss.OnAttackSuccess += ChangePattern;
     }
 
     private void InitiatePattern()
@@ -67,15 +70,7 @@ public class PatternManager : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        if (_boss != null)
-        {
-            _boss.OnAttackSuccess -= ChangePattern;
-        }
-    }
-
-    private void ChangePattern()
+    public void ChangePattern()
     {
         StopCoroutine(_pattern[_currentPattern]);
         _pool.Clear();

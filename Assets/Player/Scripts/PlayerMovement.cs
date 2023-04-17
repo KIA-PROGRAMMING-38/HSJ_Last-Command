@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if(_currentState != null)
         {
-            _currentState.Move(gameObject);
+            _currentState.Move();
         }
     }
 

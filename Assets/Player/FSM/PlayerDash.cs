@@ -17,20 +17,13 @@ public class PlayerDash : PlayerState
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(_input == null)
-        {
-            _input = animator.GetComponent<PlayerInput>();
-        }
-        if(_movement == null)
-        {
-            _movement = animator.GetComponent<PlayerMovement>();
-        }
+        InitSettings(animator);
         _movement.ChangeState(this);
     }
 
-    public override void Move(GameObject player)
+    public override void Move()
     {
-        _playerTransform = player.transform;
+        _playerTransform = _player.transform;
         _expectedDashPoint = Vector2.zero;
         _expectedDashAmount = Vector2.zero;
 
@@ -40,7 +33,7 @@ public class PlayerDash : PlayerState
         bool isOnBlock = true;
         while (isOnBlock)
         {
-            _box = Physics2D.OverlapCircle(_expectedDashPoint, player.GetComponent<CircleCollider2D>().radius, LayerMask.GetMask("Block"));
+            _box = Physics2D.OverlapCircle(_expectedDashPoint, _player.GetComponent<CircleCollider2D>().radius, LayerMask.GetMask("Block"));
             if (_box != null)
             {
                 _expectedDashPoint += _input._playerDirection._moveDirection * -_bumpDistance;
@@ -59,6 +52,6 @@ public class PlayerDash : PlayerState
             followingHead.transform.localPosition = new Vector2(0, 0);
             followingHead.GetComponent<Head>()?.ClearPath();
         }
-        player.GetComponent<Animator>().SetBool("isDashing", false);
+        _player.GetComponent<Animator>().SetBool("isDashing", false);
     }
 }

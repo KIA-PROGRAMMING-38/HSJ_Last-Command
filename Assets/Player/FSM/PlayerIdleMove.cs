@@ -8,22 +8,13 @@ public class PlayerIdleMove : PlayerState
     [SerializeField] private float _overclockWeight;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (_input == null)
+        InitSettings(animator);
+        if(_player != null)
         {
-            _input = animator.GetComponent<PlayerInput>();
-        }
-        if (_player == null)
-        {
-            _player = animator.GetComponent<Player>();
-        }
-        _player.OnOverclock -= OnOverclock;
-        _player.OnOverclock += OnOverclock;
-        _player.OnOverclockEnd -= OnOverclockEnd;
-        _player.OnOverclockEnd += OnOverclockEnd;
-
-        if (_movement == null)
-        {
-            _movement = animator.GetComponent<PlayerMovement>();
+            _player.OnOverclock -= OnOverclock;
+            _player.OnOverclock += OnOverclock;
+            _player.OnOverclockEnd -= OnOverclockEnd;
+            _player.OnOverclockEnd += OnOverclockEnd;
         }
         _movement?.ChangeState(this);
     }
@@ -45,9 +36,9 @@ public class PlayerIdleMove : PlayerState
         _moveSpeed /= _overclockWeight;
     }
 
-    public override void Move(GameObject player)
+    public override void Move()
     {
         _moveVector = _input._playerDirection._moveDirection;
-        player.transform.position += (_moveVector * (Time.deltaTime * _moveSpeed));
+        _player.transform.position += (_moveVector * (Time.deltaTime * _moveSpeed));
     }
 }

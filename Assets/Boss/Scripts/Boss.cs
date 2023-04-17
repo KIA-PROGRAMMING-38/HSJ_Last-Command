@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
 {
+    public ObjectManager _objectManager { get; private set; }
     public int _temporaryDamageGain { get; private set; }
     public int _confirmedDamageGain { get; private set; }
     public int _totalDamageGain { get; private set; }
@@ -19,14 +20,14 @@ public class Boss : MonoBehaviour
 
     public event Action OnAttackSuccess;
 
-    public event Action OnTempChange;
-    public event Action OnConfChange;
+    public event Action<int, int, float> OnTempChange;
+    public event Action<int, float> OnConfChange;
+    public event Action OnDamageChange;
     public event Action OnGroggy;
     public event Action OnDie;
 
     void Awake()
     {
-        GameManager._instance._boss = gameObject;
         _temporaryDamageGain = 0;
         _confirmedDamageGain = 0;
         _totalDamageGain = 0;
@@ -89,7 +90,8 @@ public class Boss : MonoBehaviour
         _confirmedDamageGain += _temporaryDamageGain;
         _temporaryDamageGain = 0;
         _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
-        OnConfChange?.Invoke();
+        OnConfChange?.Invoke(_totalDamageGain, _damageTreshold);
+        OnDamageChange?.Invoke();
     }
 
     private void GetTempDamage()
@@ -97,7 +99,7 @@ public class Boss : MonoBehaviour
         Debug.Log("임시피해 5!");
         _temporaryDamageGain += 5;
         _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
-        OnTempChange?.Invoke();
+        OnTempChange?.Invoke(_temporaryDamageGain, _confirmedDamageGain, _damageTreshold);
     }
 
     private void DecreaseTempDamage()
@@ -105,7 +107,7 @@ public class Boss : MonoBehaviour
         _temporaryDamageGain--;
         _elapsedTime = 0;
         Debug.Log($"현재 임시 피해 : {_temporaryDamageGain}");
-        OnTempChange?.Invoke();
+        OnTempChange?.Invoke(_temporaryDamageGain, _confirmedDamageGain, _damageTreshold);
     }
 
     private void EnterGroggyState()
@@ -117,8 +119,13 @@ public class Boss : MonoBehaviour
         _confirmedDamageGain = 0;
         OnGroggy?.Invoke();
     }
-    public float GetTreshold()
+    public int HP()
     {
-        return _damageTreshold;
+        return _Hp;
+    }
+
+    public void Init(ObjectManager objectManager)
+    {
+        _objectManager = objectManager;
     }
 }
