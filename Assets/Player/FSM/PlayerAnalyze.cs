@@ -140,4 +140,8 @@ public class PlayerAnalyze : PlayerState
     {
         Destroy(bullet.gameObject);
     }
+    public void EarnEnergy()
+    {
+        ++_activeEnergyCount;
+    }
 }

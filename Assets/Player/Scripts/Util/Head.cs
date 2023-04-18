@@ -26,20 +26,23 @@ public class Head : MonoBehaviour
 
     void FixedUpdate()
     {
-        _expectedPaths.Enqueue(_frontHead.position);
-        if (_expectedPaths.Count > _frameDelay)
-        {
-            _targetPosition = _expectedPaths.Dequeue();
-        }
-
         if(!_isDead)
         {
+            _expectedPaths.Enqueue(_frontHead.position);
+            if (_expectedPaths.Count > _frameDelay)
+            {
+                _targetPosition = _expectedPaths.Dequeue();
+            }
+
+
             transform.position = _targetPosition;
         }
     }
 
     private void OnDisable()
     {
+        _targetPosition = _frontHead.position;
+        transform.localPosition = Vector2.zero;
         ClearPath();
     }
 

@@ -11,13 +11,15 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private Boss _bossPrefab;
     [SerializeField] private EnergySpawner _energySpawnerPrefab;
     [SerializeField] private Block _blockPrefab;
-
+    [SerializeField] private GameObject _wallPrefab;
     public Player _player { get; private set; }
     public Boss _boss { get; private set; }
     public BossGroggy _bossGroggy { get; private set; }
     public BossDie _bossDie { get; private set; }
     public EnergySpawner _energySpawner { get; private set; }
     public Block _block { get; private set; }
+    public GameObject _wall { get; private set; }
+
     public void Init(GameManager gameManager)
     {
         _gameManager = gameManager;
@@ -41,6 +43,7 @@ public class ObjectManager : MonoBehaviour
         _bossDie = _boss.transform.GetChild(5).GetComponent<BossDie>();
         _energySpawner = Instantiate(_energySpawnerPrefab);
         _block = Instantiate(_blockPrefab);
+        _wall = Instantiate(_wallPrefab);
     }
 
     private void BindEvents()

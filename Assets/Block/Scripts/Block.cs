@@ -15,7 +15,7 @@ public class Block : MonoBehaviour
 
             for(int i = 0;  i < player.transform.childCount; ++i)
             {
-                player.transform.GetChild(i).GetComponent<Head>().ManipulateLocation();
+                player.transform.GetChild(i).GetComponent<Head>()?.ManipulateLocation();
             }
         }
     }

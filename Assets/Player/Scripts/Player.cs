@@ -5,6 +5,9 @@ using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using System;
 using System.Runtime.CompilerServices;
+using Random = UnityEngine.Random;
+using UnityEditor;
+using UnityEngine.Pool;
 
 public class Player : MonoBehaviour
 {
@@ -18,6 +21,10 @@ public class Player : MonoBehaviour
 
     private GameObject[] _energies;
     private Stack<bool> _energy;
+    private Animator _animator;
+    private PlayerAnalyze _analyze;
+    IObjectPool<LostEnergy> _pool;
+    [SerializeField] private LostEnergy _lostEnergy;
 
     public event Action OnOverclock;
     public event Action OnOverclockEnd;
@@ -36,6 +43,9 @@ public class Player : MonoBehaviour
         _currentLength = _defaultLength;
         _energies = new GameObject[_maxLength];
         _energies[0] = gameObject;
+        _animator = GetComponent<Animator>();
+        _analyze = _animator.GetBehaviour<PlayerAnalyze>();
+        InitiatePool();
         _isOverclocking = false;
         _energy = new Stack<bool>();
         _dieEffectTimer = PlayerDieEffect();
@@ -63,7 +73,14 @@ public class Player : MonoBehaviour
         if (_currentLength < _maxLength)
         {
             _currentLength++;
-            transform.GetChild(_currentLength - 2).gameObject.SetActive(true);
+            if(_animator.GetBool("isAnalyzing") == true)
+            {
+                _analyze.EarnEnergy();
+            }
+            else
+            {
+                transform.GetChild(_currentLength - 2).gameObject.SetActive(true);
+            }
             _energy.Push(true);
         }
 
@@ -87,6 +104,14 @@ public class Player : MonoBehaviour
     {
         _energy.Pop();
         _currentLength--;
+    }
+    private void SpreadEnergy()
+    {
+        int random = Random.Range(0, _currentLength - _defaultLength);
+        for(int i = 0; i < random; ++i)
+        {
+            LostEnergy lostEnergy = _pool.Get();
+        }
     }
 
     private void Overclock()
@@ -127,18 +152,11 @@ public class Player : MonoBehaviour
         _Hp--;
         if(_Hp <= 0)
         {
-            GetComponent<PlayerMovement>().enabled = false;
-            Head[] heads = GetComponentsInChildren<Head>();
-            foreach(Head head in heads)
-            {
-                head.Die();
-            }
-            StartCoroutine(_dieEffectTimer);
-            OnDie?.Invoke();
+            Die();
             return;
         }
-        OnHpDecrease?.Invoke();
-        Invincible();
+        SpreadEnergy();
+        ApplyDamage();
     }
 
     public int HP()
@@ -148,7 +166,7 @@ public class Player : MonoBehaviour
 
     IEnumerator PlayerDieEffect()
     {
-        WaitForSeconds wait = new WaitForSeconds(0.5f);
+        WaitForSeconds wait = new WaitForSeconds(0.3f);
         bool isExploded = false;
 
         for(int i = 1; i <= _energies.Length; ++i)
@@ -171,4 +189,54 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void InitiatePool()
+    {
+        if(_pool == null)
+        {
+            _pool = new ObjectPool<LostEnergy>(SpawnEnergy,OnGetEnergy,OnReleaseEnergy,OnDestroyEnergy, maxSize: _maxLength);
+        }
+    }
+
+    private LostEnergy SpawnEnergy()
+    {
+        LostEnergy lostEnergy = Instantiate(_lostEnergy, transform).GetComponent<LostEnergy>();
+        lostEnergy.SetPool(_pool);
+        return lostEnergy;
+    }
+    private void OnGetEnergy(LostEnergy lostEnergy)
+    {
+        lostEnergy.gameObject.SetActive(true);
+    }
+
+    private void OnReleaseEnergy(LostEnergy lostEnergy)
+    {
+        lostEnergy.gameObject.SetActive(false);
+    }
+    private void OnDestroyEnergy(LostEnergy lostEnergy)
+    {
+        Destroy(lostEnergy.gameObject);
+    }
+    private void Die()
+    {
+        GetComponent<PlayerMovement>().enabled = false;
+        Head[] heads = GetComponentsInChildren<Head>();
+        foreach (Head head in heads)
+        {
+            head.Die();
+        }
+        StartCoroutine(_dieEffectTimer);
+        OnDie?.Invoke();
+    }
+    private void ApplyDamage()
+    {
+        for (int i = 0; i < _currentLength - _defaultLength; ++i)
+        {
+            _energies[_currentLength - i - 1].SetActive(false);
+        }
+        _currentLength = _defaultLength;
+        _energy.Clear();
+        OnHpDecrease?.Invoke();
+        EndOverclock();
+        Invincible();
+    }
 }
