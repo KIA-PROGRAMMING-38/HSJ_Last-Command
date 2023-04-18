@@ -73,12 +73,7 @@ public class PatternManager : MonoBehaviour
     public void ChangePattern()
     {
         StopCoroutine(_pattern[_currentPattern]);
-        _pool.Clear();
-        foreach (Missle missle in _currentMissles)
-        {
-            Destroy(missle.gameObject);
-        }
-        _currentMissles.Clear();
+        DestroyMissiles();
         ++_currentPattern;
         _pattern[_currentPattern] = Pattern();
         InitiatePattern();
@@ -99,5 +94,15 @@ public class PatternManager : MonoBehaviour
             }
             ++childId;
         }
+    }
+    public void DestroyMissiles()
+    {
+        StopCoroutine(_pattern[_currentPattern]);
+        _pool.Clear();
+        foreach (Missle missle in _currentMissles)
+        {
+            Destroy(missle.gameObject);
+        }
+        _currentMissles.Clear();
     }
 }

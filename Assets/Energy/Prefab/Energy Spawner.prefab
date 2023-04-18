@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6044bea477b50d447aa59579a2d1d353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _createdEnergy: {fileID: 8425563714010438962, guid: 6a44dd2b0e5d02245a264b4830921971, type: 3}
+  _createdEnergyPrefab: {fileID: 8425563714010438962, guid: 6a44dd2b0e5d02245a264b4830921971, type: 3}
 --- !u!1 &8478285017401417681
 GameObject:
   m_ObjectHideFlags: 0

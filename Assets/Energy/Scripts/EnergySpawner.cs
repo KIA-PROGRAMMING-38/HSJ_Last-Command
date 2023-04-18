@@ -5,7 +5,8 @@ using UnityEngine.Pool;
 
 public class EnergySpawner : MonoBehaviour
 {
-    [SerializeField] private CreatedEnergy _createdEnergy;
+    [SerializeField] private CreatedEnergy _createdEnergyPrefab;
+    private CreatedEnergy _createdEnergy;
     private int _previousPoint;
     private int _currentPoint;
     private Transform _targetPoint;
@@ -45,7 +46,11 @@ public class EnergySpawner : MonoBehaviour
     private void SpawnEnergy()
     {
         _targetPoint = SetRandomPosition();
-        CreatedEnergy energy = Instantiate(_createdEnergy, _targetPoint.position, _targetPoint.rotation);
-        energy.OnRespawn += SetRandomPosition;
+        _createdEnergy = Instantiate(_createdEnergyPrefab, _targetPoint.position, _targetPoint.rotation);
+        _createdEnergy.OnRespawn += SetRandomPosition;
+    }
+    public void ClearEnergy()
+    {
+        _createdEnergy.gameObject.SetActive(false);
     }
 }

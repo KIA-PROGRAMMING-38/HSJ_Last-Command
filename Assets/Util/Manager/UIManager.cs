@@ -71,4 +71,8 @@ public class UIManager : MonoBehaviour
             _bossHeartImages[i] = boss.transform.GetChild(i + 1).GetChild(0).GetComponent<Image>();
         }
     }
+    public void RemoveUI()
+    {
+        _inGameUI.SetActive(false);
+    }
 }

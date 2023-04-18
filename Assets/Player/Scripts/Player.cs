@@ -28,6 +28,8 @@ public class Player : MonoBehaviour
     public event Action OnHpDecrease;
     public event Action OnDie;
 
+    [SerializeField] private GameObject _dieParticle;
+    IEnumerator _dieEffectTimer;
     private void Awake()
     {
         _defaultLength = 3;
@@ -36,6 +38,7 @@ public class Player : MonoBehaviour
         _energies[0] = gameObject;
         _isOverclocking = false;
         _energy = new Stack<bool>();
+        _dieEffectTimer = PlayerDieEffect();
 
         for (int i = 1; i < _maxLength; ++i)
         {
@@ -124,6 +127,13 @@ public class Player : MonoBehaviour
         _Hp--;
         if(_Hp <= 0)
         {
+            GetComponent<PlayerMovement>().enabled = false;
+            Head[] heads = GetComponentsInChildren<Head>();
+            foreach(Head head in heads)
+            {
+                head.Die();
+            }
+            StartCoroutine(_dieEffectTimer);
             OnDie?.Invoke();
             return;
         }
@@ -135,4 +145,30 @@ public class Player : MonoBehaviour
     {
         return _Hp;
     }
+
+    IEnumerator PlayerDieEffect()
+    {
+        WaitForSeconds wait = new WaitForSeconds(0.5f);
+        bool isExploded = false;
+
+        for(int i = 1; i <= _energies.Length; ++i)
+        {
+            if(_energies[_energies.Length - i].activeSelf)
+            {
+                isExploded = true;
+            }
+            if(isExploded)
+            {
+                Instantiate(_dieParticle, _energies[_energies.Length - i].transform.position, _energies[_energies.Length - i].transform.rotation);
+                _energies[_energies.Length - i].SetActive(false);
+                yield return wait;
+                isExploded = false;
+            }
+            else
+            {
+                yield return null;
+            }
+        }
+    }
+
 }

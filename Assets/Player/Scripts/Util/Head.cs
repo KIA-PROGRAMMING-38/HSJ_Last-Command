@@ -9,6 +9,7 @@ public class Head : MonoBehaviour
     public int _frameDelay { set; private get; }
     public Transform _frontHead { set; private get; }
     private Queue<Vector2> _expectedPaths;
+    private bool _isDead = false;
 
     void OnEnable()
     {
@@ -31,7 +32,10 @@ public class Head : MonoBehaviour
             _targetPosition = _expectedPaths.Dequeue();
         }
 
-        transform.position = _targetPosition;
+        if(!_isDead)
+        {
+            transform.position = _targetPosition;
+        }
     }
 
     private void OnDisable()
@@ -50,6 +54,9 @@ public class Head : MonoBehaviour
         {
             transform.position = (Vector3)_expectedPaths.Dequeue();
         }
-
+    }
+    public void Die()
+    {
+        _isDead = true;
     }
 }

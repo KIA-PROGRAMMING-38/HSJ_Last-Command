@@ -79,6 +79,7 @@ public class Boss : MonoBehaviour
         if(_Hp <= 0)
         {
             OnDie?.Invoke();
+            transform.GetChild(5).gameObject.SetActive(true);
             return;
         }
         OnAttackSuccess?.Invoke();

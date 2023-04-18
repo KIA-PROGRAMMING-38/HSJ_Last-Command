@@ -41,8 +41,17 @@ public class GameManager : MonoBehaviour
 
     private void BindEvents()
     {
-        _objectManager._boss.OnDie -= _stageManager.GameClear;
-        _objectManager._boss.OnDie += _stageManager.GameClear;
+        _objectManager._bossDie.OnAnimationFinished -= _stageManager.GameClear;
+        _objectManager._bossDie.OnAnimationFinished += _stageManager.GameClear;
+        _objectManager._boss.OnDie -= _uiManager.RemoveUI;
+        _objectManager._boss.OnDie += _uiManager.RemoveUI;
+        _objectManager._player.OnDie -= _uiManager.RemoveUI;
+        _objectManager._player.OnDie += _uiManager.RemoveUI;
+        _objectManager._boss.OnDie -= _patternManager.DestroyMissiles;
+        _objectManager._boss.OnDie += _patternManager.DestroyMissiles;
+        _objectManager._player.OnDie -= _patternManager.DestroyMissiles;
+        _objectManager._player.OnDie += _patternManager.DestroyMissiles;
+        _objectManager._boss.OnDie += _uiManager.RemoveUI;
         _objectManager._player.OnDie -= _stageManager.GameOver;
         _objectManager._player.OnDie += _stageManager.GameOver;
         _objectManager._boss.OnAttackSuccess -= _uiManager.BossHpDecrease;
@@ -59,12 +68,19 @@ public class GameManager : MonoBehaviour
         _objectManager._boss.OnGroggy += _uiManager.EnterGroggy;
         _objectManager._boss.OnAttackSuccess -= _patternManager.ChangePattern;
         _objectManager._boss.OnAttackSuccess += _patternManager.ChangePattern;
+
+        _stageManager.OnGameClear -= _objectManager.ClearBoss;
+        _stageManager.OnGameClear += _objectManager.ClearBoss;
     }
 
     private void UnbindEvents()
     {
-        _objectManager._boss.OnDie -= _stageManager.GameClear;
+        _objectManager._bossDie.OnAnimationFinished -= _stageManager.GameClear;
+        _objectManager._boss.OnDie -= _uiManager.RemoveUI;
+        _objectManager._boss.OnDie -= _patternManager.DestroyMissiles;
         _objectManager._player.OnDie -= _stageManager.GameOver;
+        _objectManager._player.OnDie -= _uiManager.RemoveUI;
+        _objectManager._player.OnDie -= _patternManager.DestroyMissiles;
         _objectManager._boss.OnAttackSuccess -= _uiManager.BossHpDecrease;
         _objectManager._player.OnHpDecrease -= _uiManager.PlayerHpDecrease;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
@@ -72,6 +88,8 @@ public class GameManager : MonoBehaviour
         _objectManager._boss.OnConfChange -= _uiManager.ChangeConf;
         _objectManager._boss.OnGroggy -= _uiManager.EnterGroggy;
         _objectManager._boss.OnAttackSuccess -= _patternManager.ChangePattern;
+
+        _stageManager.OnGameClear -= _objectManager.ClearBoss;
     }
 
 }
