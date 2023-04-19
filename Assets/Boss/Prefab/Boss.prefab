@@ -366,7 +366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damageTreshold: 15
   _diminishingTime: 3
-  _Hp: 5
+  _Hp: 1
 --- !u!95 &5791679862698614638
 Animator:
   serializedVersion: 5

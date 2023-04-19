@@ -56,7 +56,7 @@ MonoBehaviour:
   _frameDelay: 4
   _lostEnergy: {fileID: 5397621488999882939, guid: 244923c0047d86646a09cfcd881dc880, type: 3}
   _invincibleTime: 2
-  _Hp: 5
+  _Hp: 1
   _dieParticle: {fileID: 7437988786245679799, guid: e94a1e0f1e19cca4a84608770fe810ec, type: 3}
 --- !u!95 &3088826191711575731
 Animator:
