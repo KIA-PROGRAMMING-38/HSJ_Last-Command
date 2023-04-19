@@ -43,6 +43,8 @@ public class GameManager : MonoBehaviour
     {
         _objectManager._bossDie.OnAnimationFinished -= _stageManager.GameClear;
         _objectManager._bossDie.OnAnimationFinished += _stageManager.GameClear;
+        _objectManager._player.OnDieEnd -= _stageManager.GameOver;
+        _objectManager._player.OnDieEnd += _stageManager.GameOver;
         _objectManager._boss.OnDie -= _uiManager.RemoveUI;
         _objectManager._boss.OnDie += _uiManager.RemoveUI;
         _objectManager._player.OnDie -= _uiManager.RemoveUI;
@@ -52,12 +54,12 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnDie -= _patternManager.DestroyMissiles;
         _objectManager._player.OnDie += _patternManager.DestroyMissiles;
         _objectManager._boss.OnDie += _uiManager.RemoveUI;
-        _objectManager._player.OnDie -= _stageManager.GameOver;
-        _objectManager._player.OnDie += _stageManager.GameOver;
         _objectManager._boss.OnAttackSuccess -= _uiManager.BossHpDecrease;
         _objectManager._boss.OnAttackSuccess += _uiManager.BossHpDecrease;
         _objectManager._player.OnHpDecrease -= _uiManager.PlayerHpDecrease;
         _objectManager._player.OnHpDecrease += _uiManager.PlayerHpDecrease;
+        _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
+        _objectManager._player.OnHpDecrease += _stageManager.AddHitCount;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
         _objectManager._bossGroggy.OnGroggyEnd += _uiManager.ResetFill;
         _objectManager._boss.OnTempChange -= _uiManager.ChangeTemp;
@@ -71,6 +73,14 @@ public class GameManager : MonoBehaviour
 
         _stageManager.OnGameClear -= _objectManager.ClearBoss;
         _stageManager.OnGameClear += _objectManager.ClearBoss;
+        _stageManager.OnGameClear -= _uiManager._gameClearUI.CalculateScore;
+        _stageManager.OnGameClear += _uiManager._gameClearUI.CalculateScore;
+        _stageManager.OnGameClear -= _uiManager.ShowGameClearUI;
+        _stageManager.OnGameClear += _uiManager.ShowGameClearUI;
+        _stageManager.OnGameClearUI -= _uiManager._gameClearUI.SetUI;
+        _stageManager.OnGameClearUI += _uiManager._gameClearUI.SetUI;
+        _stageManager.OnGameOver -= _uiManager.ShowGameOverUI;
+        _stageManager.OnGameOver += _uiManager.ShowGameOverUI;
     }
 
     private void UnbindEvents()
@@ -78,11 +88,12 @@ public class GameManager : MonoBehaviour
         _objectManager._bossDie.OnAnimationFinished -= _stageManager.GameClear;
         _objectManager._boss.OnDie -= _uiManager.RemoveUI;
         _objectManager._boss.OnDie -= _patternManager.DestroyMissiles;
-        _objectManager._player.OnDie -= _stageManager.GameOver;
         _objectManager._player.OnDie -= _uiManager.RemoveUI;
         _objectManager._player.OnDie -= _patternManager.DestroyMissiles;
+        _objectManager._player.OnDieEnd -= _stageManager.GameOver;
         _objectManager._boss.OnAttackSuccess -= _uiManager.BossHpDecrease;
         _objectManager._player.OnHpDecrease -= _uiManager.PlayerHpDecrease;
+        _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
         _objectManager._boss.OnTempChange -= _uiManager.ChangeTemp;
         _objectManager._boss.OnConfChange -= _uiManager.ChangeConf;
@@ -90,6 +101,10 @@ public class GameManager : MonoBehaviour
         _objectManager._boss.OnAttackSuccess -= _patternManager.ChangePattern;
 
         _stageManager.OnGameClear -= _objectManager.ClearBoss;
+        _stageManager.OnGameClear -= _uiManager.ShowGameClearUI;
+        _stageManager.OnGameClear -= _uiManager._gameClearUI.CalculateScore;
+        _stageManager.OnGameClearUI -= _uiManager._gameClearUI.SetUI;
+        _stageManager.OnGameOver -= _uiManager.ShowGameOverUI;
     }
 
 }

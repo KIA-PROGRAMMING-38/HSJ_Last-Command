@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     [SerializeField] private int _Hp;
     public event Action OnHpDecrease;
     public event Action OnDie;
+    public event Action OnDieEnd;
 
     [SerializeField] private GameObject _dieParticle;
     IEnumerator _dieEffectTimer;
@@ -167,25 +168,24 @@ public class Player : MonoBehaviour
     IEnumerator PlayerDieEffect()
     {
         WaitForSeconds wait = new WaitForSeconds(0.3f);
-        bool isExploded = false;
 
         for(int i = 1; i <= _energies.Length; ++i)
         {
             if(_energies[_energies.Length - i].activeSelf)
             {
-                isExploded = true;
-            }
-            if(isExploded)
-            {
                 Instantiate(_dieParticle, _energies[_energies.Length - i].transform.position, _energies[_energies.Length - i].transform.rotation);
                 _energies[_energies.Length - i].SetActive(false);
+                if (i == _energies.Length)
+                {
+                    OnDieEnd?.Invoke();
+                }
                 yield return wait;
-                isExploded = false;
             }
             else
             {
                 yield return null;
             }
+            
         }
     }
 

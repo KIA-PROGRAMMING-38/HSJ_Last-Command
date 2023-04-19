@@ -10,8 +10,14 @@ public class UIManager : MonoBehaviour
     public GameManager _gameManager { get; private set; }
     [SerializeField] private GameObject _inGameUIPrefabs;
     private GameObject _inGameUI;
+    private GameObject _playerHPUI;
+    private GameObject _bossHPUI;
+    private GameOverUI _gameOverUI;
+    public GameClearUI _gameClearUI { get; private set; }
+
     private GameObject[] _playerHPImages;
     private GameObject[] _bossHPImages;
+
     private Image[] _bossHeartImages;
     private int _bossHPId;
     private int _playerHPId;
@@ -57,14 +63,18 @@ public class UIManager : MonoBehaviour
         if(_inGameUI == null)
         {
             _inGameUI = Instantiate(_inGameUIPrefabs);
+            _playerHPUI = _inGameUI.transform.GetChild(0).gameObject;
+            _bossHPUI = _inGameUI.transform.GetChild(1).gameObject;
+            _gameClearUI = _inGameUI.transform.GetChild(2).GetComponent<GameClearUI>();
+            _gameOverUI = _inGameUI.transform.GetChild(3).GetComponent<GameOverUI>();
         }
         for(int i = 0; i < playerHP; ++i)
         {
-            _playerHPImages[i] = _inGameUI.transform.GetChild(0).GetChild(i + 1).GetChild(0).gameObject;
+            _playerHPImages[i] = _playerHPUI.transform.GetChild(i + 1).GetChild(0).gameObject;
         }
         for (int i = 0; i < boss.HP(); ++i)
         {
-            _bossHPImages[i] = _inGameUI.transform.GetChild(1).GetChild(i + 1).GetChild(0).gameObject;
+            _bossHPImages[i] = _bossHPUI.transform.GetChild(i + 1).GetChild(0).gameObject;
         }
         for(int i = 0; i < 3; ++i)
         {
@@ -73,6 +83,16 @@ public class UIManager : MonoBehaviour
     }
     public void RemoveUI()
     {
-        _inGameUI.SetActive(false);
+        _playerHPUI.SetActive(false);
+        _bossHPUI.SetActive(false);
+    }
+
+    public void ShowGameOverUI()
+    {
+        _gameOverUI.gameObject.SetActive(true);
+    }
+    public void ShowGameClearUI()
+    {
+        _gameClearUI.gameObject.SetActive(true);
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.TextCore.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,7 @@ public class Boss : MonoBehaviour
 
     [SerializeField] private float _diminishingTime;
     private float _elapsedTime;
+    private bool _isOnGroggy;
 
     [SerializeField] private int _Hp;
 
@@ -28,10 +30,8 @@ public class Boss : MonoBehaviour
 
     void Awake()
     {
-        _temporaryDamageGain = 0;
-        _confirmedDamageGain = 0;
-        _totalDamageGain = 0;
-        _elapsedTime = 0;
+        ResetSettings();
+        _isOnGroggy = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -44,7 +44,7 @@ public class Boss : MonoBehaviour
             }
         }
 
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Bullet") && !_isOnGroggy)
         {
             GetTempDamage();
         }
@@ -115,9 +115,8 @@ public class Boss : MonoBehaviour
     {
         GetComponent<Animator>().SetBool("isGroggy", true);
         transform.Find("Circle").gameObject.SetActive(true);
-        _totalDamageGain = 0;
-        _temporaryDamageGain = 0;
-        _confirmedDamageGain = 0;
+        _isOnGroggy = true;
+        ResetSettings();
         OnGroggy?.Invoke();
     }
     public int HP()
@@ -128,5 +127,13 @@ public class Boss : MonoBehaviour
     public void Init(ObjectManager objectManager)
     {
         _objectManager = objectManager;
+    }
+    public void EndGroggy() => _isOnGroggy = false;
+    private void ResetSettings()
+    {
+        _temporaryDamageGain = 0;
+        _confirmedDamageGain = 0;
+        _totalDamageGain = 0;
+        _elapsedTime = 0;
     }
 }
