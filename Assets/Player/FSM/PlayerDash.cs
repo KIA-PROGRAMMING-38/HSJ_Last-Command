@@ -5,6 +5,7 @@ using UnityEngine.Windows;
 using UnityEngine.Animations;
 using Unity.VisualScripting;
 using System.Runtime.CompilerServices;
+using UnityEngine.Pool;
 
 public class PlayerDash : PlayerState
 {
@@ -15,15 +16,21 @@ public class PlayerDash : PlayerState
     Vector2 _expectedDashPoint;
     Collider2D _box;
 
+    [SerializeField] private GameObject _circleEffect;
+    private IObjectPool<Particle> _pool;
+
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         InitSettings(animator);
         _movement.ChangeState(this);
+        _player.EnableDashTrail();
+        _playerTransform = _player.transform;
+        InitPool();
+        Particle circle = _pool.Get();
     }
 
     public override void Move()
     {
-        _playerTransform = _player.transform;
         _expectedDashPoint = Vector2.zero;
         _expectedDashAmount = Vector2.zero;
 
@@ -53,5 +60,36 @@ public class PlayerDash : PlayerState
             followingHead.GetComponent<Head>()?.ClearPath();
         }
         _player.GetComponent<Animator>().SetBool("isDashing", false);
+    }
+
+    private void InitPool()
+    {
+        if(_pool == null)
+        {
+            _pool = new ObjectPool<Particle>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 2);
+        }
+    }
+
+    private Particle Create()
+    {
+        Particle particle = Instantiate(_circleEffect, _playerTransform.position, _playerTransform.rotation).GetComponent<Particle>();
+        particle.SetPool(_pool);
+        return particle;
+    }
+
+    private void OnGet(Particle particle)
+    {
+        particle.gameObject.SetActive(true);
+        particle.transform.position = _playerTransform.position;
+        particle.transform.rotation = _playerTransform.rotation;
+    }
+    private void OnRelease(Particle particle)
+    {
+        particle.gameObject.SetActive(false);
+    }
+
+    private void OnDestroyParticle(Particle particle)
+    {
+        Destroy(particle.gameObject);
     }
 }

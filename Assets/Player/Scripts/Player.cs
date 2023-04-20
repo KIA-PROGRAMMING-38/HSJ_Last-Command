@@ -38,24 +38,31 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject _dieParticle;
     IEnumerator _dieEffectTimer;
+
+    private TrailRenderer _trail;
+    private SpriteRenderer[] _energySprites;
     private void Awake()
     {
         _defaultLength = 3;
         _currentLength = _defaultLength;
         _energies = new GameObject[_maxLength];
+        _energySprites = new SpriteRenderer[_maxLength];
         _energies[0] = gameObject;
+        _energySprites[0] = gameObject.GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
         _analyze = _animator.GetBehaviour<PlayerAnalyze>();
         InitiatePool();
         _isOverclocking = false;
         _energy = new Stack<bool>();
         _dieEffectTimer = PlayerDieEffect();
+        _trail = GetComponent<TrailRenderer>();
 
         for (int i = 1; i < _maxLength; ++i)
         {
             GameObject newHead = Instantiate(_snakeSprite, transform);
             newHead.name = $"Head{i}";
             _energies[i] = newHead;
+            _energySprites[i] = newHead.GetComponent<SpriteRenderer>();
             Head headComponent = newHead.AddComponent<Head>();
             headComponent._frameDelay = _frameDelay;
             headComponent._frontHead = _energies[i - 1].transform;
@@ -238,5 +245,25 @@ public class Player : MonoBehaviour
         OnHpDecrease?.Invoke();
         EndOverclock();
         Invincible();
+    }
+
+    public void EnableDashTrail()
+    {
+        StartCoroutine(DashTrail());
+    }
+
+    IEnumerator DashTrail()
+    {
+        _trail.enabled = true;
+        foreach(SpriteRenderer sprites in _energySprites)
+        {
+            sprites.enabled = false;
+        }
+        yield return new WaitForSeconds(_trail.time);
+        foreach (SpriteRenderer sprites in _energySprites)
+        {
+            sprites.enabled = true;
+        }
+        _trail.enabled = false;
     }
 }

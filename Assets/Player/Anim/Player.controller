@@ -43,10 +43,10 @@ AnimatorStateMachine:
     m_Position: {x: -120, y: 220, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7342826717379804949}
-    m_Position: {x: -120, y: 390, z: 0}
+    m_Position: {x: -120, y: 370, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3757195750657885396}
-    m_Position: {x: 180, y: 390, z: 0}
+    m_Position: {x: 260, y: 380, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -198,6 +198,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dashDistance: 3
   _bumpDistance: 0.5
+  _circleEffect: {fileID: 215816008283011226, guid: bd70767a905430c45aca38202df65a4a, type: 3}
 --- !u!1101 &1187868588537587236
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -304,7 +305,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bullet: {fileID: 8075038745953617309, guid: 0dddb4e436bdc15499885ad1151e6911, type: 3}
   _moveSpeed: 1
-  _attackWaitTime: 0.2
+  _attackWaitTime: 1
   _overclockWeight: 0.5
 --- !u!206 &4613464892505005526
 BlendTree:
