@@ -13,6 +13,7 @@ public class BossGroggy : StateMachineBehaviour
     private bool _isOnZone;
 
     public event Action OnGroggyEnd;
+    public event Action<float> OnGroggyTime;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -38,6 +39,7 @@ public class BossGroggy : StateMachineBehaviour
         }
 
         _elapsedTime += Time.deltaTime;
+        OnGroggyTime?.Invoke(_groggyTime - _elapsedTime);
 
         if(_elapsedTime >= _groggyTime)
         {

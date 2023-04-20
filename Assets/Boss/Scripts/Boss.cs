@@ -28,9 +28,11 @@ public class Boss : MonoBehaviour
     public event Action OnGroggy;
     public event Action OnDie;
 
+    private GameObject _groggyEffect;
     void Awake()
     {
         ResetSettings();
+        _groggyEffect = transform.Find("BossGroggy").gameObject;
         _isOnGroggy = false;
     }
 
@@ -38,13 +40,13 @@ public class Boss : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            if(_temporaryDamageGain > 0)
+            if (_temporaryDamageGain > 0)
             {
                 ChangeDamageType();
             }
         }
 
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Bullet") && !_isOnGroggy)
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet") && !_isOnGroggy)
         {
             GetTempDamage();
         }
@@ -53,7 +55,7 @@ public class Boss : MonoBehaviour
         Debug.Log($"현재 확정 피해 : {_confirmedDamageGain}");
         Debug.Log($"총 피해 : {_totalDamageGain}");
 
-        if(_totalDamageGain >= _damageTreshold)
+        if (_totalDamageGain >= _damageTreshold)
         {
             EnterGroggyState();
         }
@@ -61,9 +63,9 @@ public class Boss : MonoBehaviour
 
     private void Update()
     {
-        if(_temporaryDamageGain > 0)
+        if (_temporaryDamageGain > 0)
         {
-            if(_elapsedTime >= _diminishingTime)
+            if (_elapsedTime >= _diminishingTime)
             {
                 DecreaseTempDamage();
             }
@@ -76,10 +78,10 @@ public class Boss : MonoBehaviour
     public void Damaged()
     {
         _Hp--;
-        if(_Hp <= 0)
+        if (_Hp <= 0)
         {
             OnDie?.Invoke();
-            transform.GetChild(5).gameObject.SetActive(true);
+            transform.Find("BossDie").gameObject.SetActive(true);
             return;
         }
         OnAttackSuccess?.Invoke();
@@ -116,6 +118,7 @@ public class Boss : MonoBehaviour
         GetComponent<Animator>().SetBool("isGroggy", true);
         transform.Find("Circle").gameObject.SetActive(true);
         _isOnGroggy = true;
+        _groggyEffect.SetActive(true);
         ResetSettings();
         OnGroggy?.Invoke();
     }
@@ -128,7 +131,11 @@ public class Boss : MonoBehaviour
     {
         _objectManager = objectManager;
     }
-    public void EndGroggy() => _isOnGroggy = false;
+    public void EndGroggy()
+    {
+        _isOnGroggy = false;
+        _groggyEffect.SetActive(false);
+    }
     private void ResetSettings()
     {
         _temporaryDamageGain = 0;
