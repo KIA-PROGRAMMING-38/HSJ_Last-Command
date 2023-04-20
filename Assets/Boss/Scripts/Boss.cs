@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.TextCore.Text;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UI;
+using static UnityEngine.ParticleSystem;
 
 public class Boss : MonoBehaviour
 {
@@ -29,9 +31,13 @@ public class Boss : MonoBehaviour
     public event Action OnDie;
 
     private GameObject _groggyEffect;
+
+    [SerializeField] private GameObject _damageEffect;
+    private IObjectPool<Effect> _pool;
     void Awake()
     {
         ResetSettings();
+        InitPool();
         _groggyEffect = transform.Find("BossGroggy").gameObject;
         _isOnGroggy = false;
     }
@@ -100,6 +106,7 @@ public class Boss : MonoBehaviour
     private void GetTempDamage()
     {
         Debug.Log("임시피해 5!");
+        Effect particle = _pool.Get();
         _temporaryDamageGain += 5;
         _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
         OnTempChange?.Invoke(_temporaryDamageGain, _confirmedDamageGain, _damageTreshold);
@@ -142,5 +149,36 @@ public class Boss : MonoBehaviour
         _confirmedDamageGain = 0;
         _totalDamageGain = 0;
         _elapsedTime = 0;
+    }
+
+    private void InitPool()
+    {
+        if (_pool == null)
+        {
+            _pool = new ObjectPool<Effect>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 8);
+        }
+    }
+
+    private Effect Create()
+    {
+        Effect particle = Instantiate(_damageEffect, transform.position, transform.rotation).GetComponent<Effect>();
+        particle.SetPool(_pool);
+        return particle;
+    }
+
+    private void OnGet(Effect particle)
+    {
+        particle.gameObject.SetActive(true);
+        particle.transform.position = transform.position;
+        particle.transform.rotation = transform.rotation;
+    }
+    private void OnRelease(Effect particle)
+    {
+        particle.gameObject.SetActive(false);
+    }
+
+    private void OnDestroyParticle(Effect particle)
+    {
+        Destroy(particle.gameObject);
     }
 }

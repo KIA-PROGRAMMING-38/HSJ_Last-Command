@@ -17,7 +17,7 @@ public class PlayerDash : PlayerState
     Collider2D _box;
 
     [SerializeField] private GameObject _circleEffect;
-    private IObjectPool<Particle> _pool;
+    private IObjectPool<Effect> _pool;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -26,7 +26,7 @@ public class PlayerDash : PlayerState
         _player.EnableDashTrail();
         _playerTransform = _player.transform;
         InitPool();
-        Particle circle = _pool.Get();
+        Effect circle = _pool.Get();
     }
 
     public override void Move()
@@ -66,29 +66,29 @@ public class PlayerDash : PlayerState
     {
         if(_pool == null)
         {
-            _pool = new ObjectPool<Particle>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 2);
+            _pool = new ObjectPool<Effect>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 2);
         }
     }
 
-    private Particle Create()
+    private Effect Create()
     {
-        Particle particle = Instantiate(_circleEffect, _playerTransform.position, _playerTransform.rotation).GetComponent<Particle>();
+        Effect particle = Instantiate(_circleEffect, _playerTransform.position, _playerTransform.rotation).GetComponent<Effect>();
         particle.SetPool(_pool);
         return particle;
     }
 
-    private void OnGet(Particle particle)
+    private void OnGet(Effect particle)
     {
         particle.gameObject.SetActive(true);
         particle.transform.position = _playerTransform.position;
         particle.transform.rotation = _playerTransform.rotation;
     }
-    private void OnRelease(Particle particle)
+    private void OnRelease(Effect particle)
     {
         particle.gameObject.SetActive(false);
     }
 
-    private void OnDestroyParticle(Particle particle)
+    private void OnDestroyParticle(Effect particle)
     {
         Destroy(particle.gameObject);
     }

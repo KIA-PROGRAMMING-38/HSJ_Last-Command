@@ -60,6 +60,8 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnHpDecrease += _uiManager.PlayerHpDecrease;
         _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease += _stageManager.AddHitCount;
+        _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
+        _objectManager._player.OnHpDecrease += _stageManager.StopTime;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
         _objectManager._bossGroggy.OnGroggyEnd += _uiManager.ResetFill;
         _objectManager._boss.OnTempChange -= _uiManager.ChangeTemp;
@@ -68,6 +70,8 @@ public class GameManager : MonoBehaviour
         _objectManager._boss.OnConfChange += _uiManager.ChangeConf;
         _objectManager._boss.OnGroggy -= _uiManager.EnterGroggy;
         _objectManager._boss.OnGroggy += _uiManager.EnterGroggy;
+        _objectManager._boss.OnAttackSuccess -= _stageManager.StopTime;
+        _objectManager._boss.OnAttackSuccess += _stageManager.StopTime;
         _objectManager._boss.OnAttackSuccess -= _patternManager.ChangePattern;
         _objectManager._boss.OnAttackSuccess += _patternManager.ChangePattern;
 
@@ -94,11 +98,13 @@ public class GameManager : MonoBehaviour
         _objectManager._boss.OnAttackSuccess -= _uiManager.BossHpDecrease;
         _objectManager._player.OnHpDecrease -= _uiManager.PlayerHpDecrease;
         _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
+        _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
         _objectManager._boss.OnTempChange -= _uiManager.ChangeTemp;
         _objectManager._boss.OnConfChange -= _uiManager.ChangeConf;
         _objectManager._boss.OnGroggy -= _uiManager.EnterGroggy;
         _objectManager._boss.OnAttackSuccess -= _patternManager.ChangePattern;
+        _objectManager._boss.OnAttackSuccess -= _stageManager.StopTime;
 
         _stageManager.OnGameClear -= _objectManager.ClearBoss;
         _stageManager.OnGameClear -= _uiManager.ShowGameClearUI;

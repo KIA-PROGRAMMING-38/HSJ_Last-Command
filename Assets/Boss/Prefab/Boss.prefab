@@ -775,7 +775,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damageTreshold: 15
   _diminishingTime: 3
-  _Hp: 2
+  _Hp: 5
+  _damageEffect: {fileID: 3220638040115060672, guid: 1392deeb6a1de124ba2e0532d2037888, type: 3}
 --- !u!95 &5791679862698614638
 Animator:
   serializedVersion: 5

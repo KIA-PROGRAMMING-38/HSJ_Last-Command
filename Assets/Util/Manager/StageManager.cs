@@ -70,4 +70,26 @@ public class StageManager : MonoBehaviour
             _rank = Rank.D;
         }
     }
+
+    public void StopTime()
+    {
+        StartCoroutine(Timer());
+    }
+
+    IEnumerator Timer()
+    {
+        Time.timeScale = 0;
+        float startTime = Time.realtimeSinceStartup;
+        while(Time.realtimeSinceStartup - startTime < 0.2f)
+        {
+            yield return null;
+        }
+        Time.timeScale = 1;
+        yield return null;
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
 }

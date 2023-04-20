@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
+using UnityEngine.Pool;
+using Random = UnityEngine.Random;
 
 public class BossGroggy : StateMachineBehaviour
 {
@@ -15,16 +16,21 @@ public class BossGroggy : StateMachineBehaviour
     public event Action OnGroggyEnd;
     public event Action<float> OnGroggyTime;
 
+    private IObjectPool<Effect> _pool;
+    [SerializeField] private GameObject _particle;
+    private Transform _transform;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if(_attackZone == null)
         {
             _attackZone = animator.transform.Find("Circle").gameObject.GetComponent<AttackZone>();
+            _transform = animator.transform;
+            InitPool();
+            _attackZone.OnZone -= isOnZone;
+            _attackZone.OffZone -= isOffZone;
+            _attackZone.OnZone += isOnZone;
+            _attackZone.OffZone += isOffZone;
         }
-        _attackZone.OnZone -= isOnZone;
-        _attackZone.OffZone -= isOffZone;
-        _attackZone.OnZone += isOnZone;
-        _attackZone.OffZone += isOffZone;
         _elapsedTime = 0;
         Debug.Log("그로기!");
     }
@@ -35,6 +41,7 @@ public class BossGroggy : StateMachineBehaviour
             animator.SetBool("isGroggy", false);
             Debug.Log("공격!");
             animator.GetComponent<Boss>().Damaged();
+            Effect particle = _pool.Get();
             OnGroggyEnd?.Invoke();
         }
 
@@ -65,4 +72,35 @@ public class BossGroggy : StateMachineBehaviour
     }
     private void isOnZone () => _isOnZone = true;
     private void isOffZone() => _isOnZone = false;
+
+    private void InitPool()
+    {
+        if (_pool == null)
+        {
+            _pool = new ObjectPool<Effect>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 2);
+        }
+    }
+
+    private Effect Create()
+    {
+        Effect particle = Instantiate(_particle, _transform.position, Quaternion.Euler(0,0,Random.Range(0,360))).GetComponent<Effect>();
+        particle.SetPool(_pool);
+        return particle;
+    }
+
+    private void OnGet(Effect particle)
+    {
+        particle.gameObject.SetActive(true);
+        particle.transform.position = _transform.position;
+        particle.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 360));
+    }
+    private void OnRelease(Effect particle)
+    {
+        particle.gameObject.SetActive(false);
+    }
+
+    private void OnDestroyParticle(Effect particle)
+    {
+        Destroy(particle.gameObject);
+    }
 }
