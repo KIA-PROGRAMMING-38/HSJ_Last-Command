@@ -9,29 +9,13 @@ public class PlayerIdleMove : PlayerState
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         InitSettings(animator);
-        if(_player != null)
-        {
-            _player.OnOverclock -= OnOverclock;
-            _player.OnOverclock += OnOverclock;
-            _player.OnOverclockEnd -= OnOverclockEnd;
-            _player.OnOverclockEnd += OnOverclockEnd;
-        }
         _movement?.ChangeState(this);
     }
-    private void OnDestroy()
-    {
-        if(_player != null)
-        {
-            _player.OnOverclock -= OnOverclock;
-            _player.OnOverclockEnd -= OnOverclockEnd;
-        }
-    }
-
-    private void OnOverclock()
+    public void OnOverclock()
     {
         _moveSpeed *= _overclockWeight;
     }
-    private void OnOverclockEnd()
+    public void OnOverclockEnd()
     {
         _moveSpeed /= _overclockWeight;
     }

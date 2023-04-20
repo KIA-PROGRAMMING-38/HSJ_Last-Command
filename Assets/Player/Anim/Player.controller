@@ -306,7 +306,7 @@ MonoBehaviour:
   _bullet: {fileID: 8075038745953617309, guid: 0dddb4e436bdc15499885ad1151e6911, type: 3}
   _moveSpeed: 1
   _attackWaitTime: 1
-  _overclockWeight: 0.5
+  _overclockWeight: 0.2
 --- !u!206 &4613464892505005526
 BlendTree:
   m_ObjectHideFlags: 1

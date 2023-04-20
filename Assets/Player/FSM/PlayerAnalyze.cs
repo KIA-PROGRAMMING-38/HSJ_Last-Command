@@ -38,13 +38,6 @@ public class PlayerAnalyze : PlayerState
             }
         }
 
-        if (_player != null)
-        {
-            _player.OnOverclock -= OnOverclock;
-            _player.OnOverclock += OnOverclock;
-            _player.OnOverclockEnd -= OnOverclockEnd;
-            _player.OnOverclockEnd += OnOverclockEnd;
-        }
         if (_movement != null)
         {
             _movement.ChangeState(this);
@@ -75,14 +68,6 @@ public class PlayerAnalyze : PlayerState
             _player.EndOverclock();
         }
     }
-    private void OnDestroy()
-    {
-        if (_player != null)
-        {
-            _player.OnOverclock -= OnOverclock;
-            _player.OnOverclockEnd -= OnOverclockEnd;
-        }
-    }
     void Attack()
     {
         if (_player.IsEnergyCharged())
@@ -96,12 +81,12 @@ public class PlayerAnalyze : PlayerState
     }
 
 
-    void OnOverclock()
+    public void OnOverclock()
     {
         _attackWaitTime *= _overclockWeight;
     }
 
-    void OnOverclockEnd()
+    public void OnOverclockEnd()
     {
         _attackWaitTime /= _overclockWeight;
     }

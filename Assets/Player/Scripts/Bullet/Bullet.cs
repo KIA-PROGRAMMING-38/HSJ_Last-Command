@@ -22,9 +22,9 @@ public class Bullet : MonoBehaviour
 
     private float _coroutineWaitTime;
     private IEnumerator _bulletMove;
+    private TrailRenderer _trail;
 
     private IObjectPool<Bullet> _currentPool;
-
     void Awake()
     {
         if(_boss == null || _player == null)
@@ -45,6 +45,8 @@ public class Bullet : MonoBehaviour
     }
     IEnumerator BulletMove()
     {
+        _trail.Clear();
+        _trail.enabled = true;
         while(Vector2.Distance(transform.position,_waypointPosition) >= 0.1f)
         {
             float ratio = Mathf.Clamp01(Time.deltaTime / _moveTime);
@@ -55,7 +57,7 @@ public class Bullet : MonoBehaviour
         yield return new WaitForSeconds(_coroutineWaitTime);
         ResetSettings(_bossPosition, _lerpSpeed2);
 
-        while (Vector2.Distance(transform.position, _bossPosition) >= 0.1f)
+        while (Vector2.Distance(transform.position, _bossPosition) >= 0.2f)
         {
             float ratio = Mathf.Clamp01(Time.deltaTime / _moveTime);
             transform.position = Vector3.Lerp(transform.position, _bossPosition, ratio);
@@ -82,8 +84,9 @@ public class Bullet : MonoBehaviour
         _waypointRadius = 1;
         _lerpSpeed1 = 20f;
         _lerpSpeed2 = 50f;
-        _coroutineWaitTime = 0.5f;
+        _coroutineWaitTime = 0.2f;
         transform.SetParent(default);
+        _trail = GetComponent<TrailRenderer>();
     }
 
     public void SetPool(IObjectPool<Bullet> pool)

@@ -13,6 +13,8 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private Block _blockPrefab;
     [SerializeField] private GameObject _wallPrefab;
     public Player _player { get; private set; }
+    public PlayerAnalyze _playerAnalyze { get; private set; }
+    public PlayerIdleMove _playerIdle { get; private set; }
     public Boss _boss { get; private set; }
     public BossGroggy _bossGroggy { get; private set; }
     public BossDie _bossDie { get; private set; }
@@ -38,6 +40,8 @@ public class ObjectManager : MonoBehaviour
     public void InstantiateObjects()
     {
         _player = Instantiate(_playerPrefab);
+        _playerAnalyze = _player.GetComponent<Animator>().GetBehaviour<PlayerAnalyze>();
+        _playerIdle = _player.GetComponent<Animator>().GetBehaviour<PlayerIdleMove>();
         _boss = Instantiate(_bossPrefab);
         _bossGroggy = _boss.GetComponent<Animator>().GetBehaviour<BossGroggy>();
         _bossDie = _boss.transform.GetChild(5).GetComponent<BossDie>();
@@ -60,6 +64,14 @@ public class ObjectManager : MonoBehaviour
         _player.OnDie += ClearObject;
         _player.OnDie -= ClearBoss;
         _player.OnDie += ClearBoss;
+        _player.OnOverclock -= _playerAnalyze.OnOverclock;
+        _player.OnOverclock += _playerAnalyze.OnOverclock;
+        _player.OnOverclockEnd -= _playerAnalyze.OnOverclockEnd;
+        _player.OnOverclockEnd += _playerAnalyze.OnOverclockEnd;
+        _player.OnOverclock -= _playerIdle.OnOverclock;
+        _player.OnOverclock += _playerIdle.OnOverclock;
+        _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
+        _player.OnOverclockEnd += _playerIdle.OnOverclockEnd;
     }
     private void UnbindEvents()
     {
@@ -69,6 +81,10 @@ public class ObjectManager : MonoBehaviour
         _boss.OnDie -= ClearPlayer;
         _player.OnDie -= ClearObject;
         _player.OnDie -= ClearBoss;
+        _player.OnOverclock -= _playerAnalyze.OnOverclock;
+        _player.OnOverclockEnd -= _playerAnalyze.OnOverclockEnd;
+        _player.OnOverclock -= _playerIdle.OnOverclock;
+        _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
     }
     private void ClearObject()
     {

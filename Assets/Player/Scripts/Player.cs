@@ -90,6 +90,7 @@ public class Player : MonoBehaviour
                 transform.GetChild(_currentLength - 2).gameObject.SetActive(true);
             }
             _energy.Push(true);
+            Debug.Log(_currentLength);
         }
 
         if (_currentLength == _maxLength)
