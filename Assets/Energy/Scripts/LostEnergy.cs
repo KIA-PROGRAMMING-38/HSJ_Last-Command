@@ -13,7 +13,7 @@ public class LostEnergy : Energy
     private BoxCollider2D _collider; 
     private Player _player;
     private Vector3 _targetPosition;
-    private float _waypointRadius = 1;
+    private float _waypointRadius = 2;
     private float _lerpSpeed = 10;
     private float _moveTime;
     private float _distance;

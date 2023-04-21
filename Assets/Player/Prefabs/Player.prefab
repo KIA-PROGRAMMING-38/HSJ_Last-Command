@@ -52,10 +52,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snakeSprite: {fileID: 5786334926245051690, guid: 5222519e7fcefcc4a8ddbc6ff1b6f3b1, type: 3}
+  _defaultLength: 0
   _maxLength: 8
   _currentLength: 0
   _frameDelay: 4
   _lostEnergy: {fileID: 5397621488999882939, guid: 244923c0047d86646a09cfcd881dc880, type: 3}
+  _overclockColor: {r: 1, g: 0.95681447, b: 0.75, a: 0.6862745}
+  _overclockEffectPrefab: {fileID: 8894357174475488106, guid: e6b2c224e77cc6140913ac515b855e3a, type: 3}
   _invincibleTime: 2
   _Hp: 5
   _dieParticle: {fileID: 7437988786245679799, guid: e94a1e0f1e19cca4a84608770fe810ec, type: 3}

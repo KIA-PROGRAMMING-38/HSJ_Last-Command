@@ -34,7 +34,7 @@ public class PlayerDash : PlayerState
         _expectedDashPoint = Vector2.zero;
         _expectedDashAmount = Vector2.zero;
 
-        _expectedDashAmount = _input._playerDirection._moveDirection * _dashDistance;
+        _expectedDashAmount = _input._playerDirection._moveDirection * Vector2.right * _dashDistance;
         _expectedDashPoint = (Vector2)_playerTransform.position + _expectedDashAmount;
 
         bool isOnBlock = true;

@@ -27,7 +27,7 @@ public class PlayerAnalyze : PlayerState
         _attacked = false;
         _activeEnergyCount = 0;
 
-        for (int i = 0; i < _playerTransform.childCount; ++i)
+        for (int i = 0; i < _playerTransform.childCount - 1; ++i)
         {
             _followingHead = _playerTransform.GetChild(i).gameObject;
             _followingHead.transform.localPosition = new Vector2(0, 0);
@@ -95,7 +95,7 @@ public class PlayerAnalyze : PlayerState
     {
         float Horizontal = Input.GetAxisRaw("Horizontal");
         float Vertical = Input.GetAxisRaw("Vertical");
-        _player.transform.Translate(new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.fixedDeltaTime);
+        _player.transform.position += new Vector3(Horizontal, Vertical, 0) * _moveSpeed * Time.fixedDeltaTime;
     }
 
     private void InitiatePool()
@@ -129,4 +129,12 @@ public class PlayerAnalyze : PlayerState
     {
         ++_activeEnergyCount;
     }
+    public void Damaged()
+    {
+       if(_player != null)
+        {
+            _activeEnergyCount = _player._defaultLength - 1;
+        }
+    }
+
 }

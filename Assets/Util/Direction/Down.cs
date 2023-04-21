@@ -7,5 +7,6 @@ public class Down : Direction
     public Down()
     {
         this._moveDirection = Vector2.down;
+        this._rotation = Quaternion.Euler(0, 0, 180);
     }
 }

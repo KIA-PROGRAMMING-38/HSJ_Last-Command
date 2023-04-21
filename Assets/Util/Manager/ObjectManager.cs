@@ -68,6 +68,8 @@ public class ObjectManager : MonoBehaviour
         _player.OnOverclock += _playerAnalyze.OnOverclock;
         _player.OnOverclockEnd -= _playerAnalyze.OnOverclockEnd;
         _player.OnOverclockEnd += _playerAnalyze.OnOverclockEnd;
+        _player.OnHpDecrease -= _playerAnalyze.Damaged;
+        _player.OnHpDecrease += _playerAnalyze.Damaged;
         _player.OnOverclock -= _playerIdle.OnOverclock;
         _player.OnOverclock += _playerIdle.OnOverclock;
         _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
@@ -83,6 +85,7 @@ public class ObjectManager : MonoBehaviour
         _player.OnDie -= ClearBoss;
         _player.OnOverclock -= _playerAnalyze.OnOverclock;
         _player.OnOverclockEnd -= _playerAnalyze.OnOverclockEnd;
+        _player.OnHpDecrease -= _playerAnalyze.Damaged;
         _player.OnOverclock -= _playerIdle.OnOverclock;
         _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
     }

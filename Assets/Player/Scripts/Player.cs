@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     public ObjectManager _objectManager { get; private set; }
 
     [SerializeField] private GameObject _snakeSprite;
-    private int _defaultLength;
+    public int _defaultLength;
     [SerializeField] private int _maxLength;
     public int _currentLength;
     [SerializeField] private int _frameDelay;
@@ -30,6 +30,9 @@ public class Player : MonoBehaviour
 
     public event Action OnOverclock;
     public event Action OnOverclockEnd;
+    [SerializeField] private Color _overclockColor;
+    [SerializeField] private GameObject _overclockEffectPrefab;
+    private GameObject _overclockEffect;
     private bool _isOverclocking;
 
     [SerializeField] private float _invincibleTime;
@@ -72,6 +75,9 @@ public class Player : MonoBehaviour
             headComponent._frameDelay = _frameDelay;
             headComponent._frontHead = _energies[i - 1].transform;
         }
+        _overclockEffect = Instantiate(_overclockEffectPrefab, transform);
+        ChangeColor(Color.gray);
+        _overclockEffect.SetActive(false);
         for (int i = _maxLength; i > _defaultLength; --i)
         {
             transform.GetChild(i - 2).gameObject.SetActive(false);
@@ -140,6 +146,8 @@ public class Player : MonoBehaviour
         if (!_isOverclocking)
         {
             OnOverclock?.Invoke();
+            _overclockEffect.SetActive(true);
+            ChangeColor(_overclockColor);
             _isOverclocking = true;
             Debug.Log("오버클럭!");
         }
@@ -149,6 +157,8 @@ public class Player : MonoBehaviour
         if (_isOverclocking)
         {
             OnOverclockEnd?.Invoke();
+            _overclockEffect.SetActive(false);
+            ChangeColor(Color.gray);
             _isOverclocking = false;
             Debug.Log("오버클럭 해제");
         }
@@ -283,5 +293,13 @@ public class Player : MonoBehaviour
             sprites.enabled = true;
         }
         _trail.enabled = false;
+    }
+
+    private void ChangeColor(Color color)
+    {
+        for (int i = _defaultLength; i < _maxLength; ++i)
+        {
+            _energies[i].GetComponent<SpriteRenderer>().color = color;
+        }
     }
 }

@@ -8,5 +8,6 @@ public class Left : Direction
     public Left()
     {
         this._moveDirection = Vector2.left;
+        this._rotation = Quaternion.Euler(0, 0, 90);
     }
 }
