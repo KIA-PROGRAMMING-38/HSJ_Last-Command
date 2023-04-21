@@ -8,6 +8,8 @@ using System.Runtime.CompilerServices;
 using Random = UnityEngine.Random;
 using UnityEditor;
 using UnityEngine.Pool;
+using static UnityEngine.ParticleSystem;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -41,6 +43,9 @@ public class Player : MonoBehaviour
 
     private TrailRenderer _trail;
     private SpriteRenderer[] _energySprites;
+
+    [SerializeField] private GameObject _hurtEffect;
+    private GameObject[] _hurtParticle;
     private void Awake()
     {
         _defaultLength = 3;
@@ -56,7 +61,7 @@ public class Player : MonoBehaviour
         _energy = new Stack<bool>();
         _dieEffectTimer = PlayerDieEffect();
         _trail = GetComponent<TrailRenderer>();
-
+        _hurtParticle = new GameObject[3];
         for (int i = 1; i < _maxLength; ++i)
         {
             GameObject newHead = Instantiate(_snakeSprite, transform);
@@ -70,6 +75,13 @@ public class Player : MonoBehaviour
         for (int i = _maxLength; i > _defaultLength; --i)
         {
             transform.GetChild(i - 2).gameObject.SetActive(false);
+        }
+        _hurtParticle[0] = Instantiate(_hurtEffect);
+        _hurtParticle[1] = _hurtParticle[0].transform.GetChild(0).gameObject;
+        _hurtParticle[2] = _hurtParticle[0].transform.GetChild(1).gameObject;
+        for(int i = 1; i < 3; ++i)
+        {
+            _hurtParticle[i].SetActive(false);
         }
     }
     public void Init(ObjectManager objectManager)
@@ -163,6 +175,11 @@ public class Player : MonoBehaviour
         {
             Die();
             return;
+        }
+        for (int i = 1; i < 3; ++i)
+        {
+            _hurtParticle[i].transform.position = transform.position;
+            _hurtParticle[i].SetActive(true);
         }
         SpreadEnergy();
         ApplyDamage();

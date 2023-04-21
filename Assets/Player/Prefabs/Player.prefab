@@ -59,6 +59,7 @@ MonoBehaviour:
   _invincibleTime: 2
   _Hp: 5
   _dieParticle: {fileID: 7437988786245679799, guid: e94a1e0f1e19cca4a84608770fe810ec, type: 3}
+  _hurtEffect: {fileID: 4326198329854298245, guid: 44c637566f0363e4e8c8c0ad471e7d3a, type: 3}
 --- !u!95 &3088826191711575731
 Animator:
   serializedVersion: 5

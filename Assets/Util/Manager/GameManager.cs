@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour
         _objectManager._boss.OnAttackSuccess += _uiManager.BossHpDecrease;
         _objectManager._player.OnHpDecrease -= _uiManager.PlayerHpDecrease;
         _objectManager._player.OnHpDecrease += _uiManager.PlayerHpDecrease;
+        _objectManager._player.OnHpDecrease -= _uiManager.ShakeUI;
+        _objectManager._player.OnHpDecrease += _uiManager.ShakeUI;
         _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease += _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
@@ -97,6 +99,7 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnDieEnd -= _stageManager.GameOver;
         _objectManager._boss.OnAttackSuccess -= _uiManager.BossHpDecrease;
         _objectManager._player.OnHpDecrease -= _uiManager.PlayerHpDecrease;
+        _objectManager._player.OnHpDecrease -= _uiManager.ShakeUI;
         _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;

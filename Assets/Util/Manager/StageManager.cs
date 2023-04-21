@@ -80,7 +80,7 @@ public class StageManager : MonoBehaviour
     {
         Time.timeScale = 0;
         float startTime = Time.realtimeSinceStartup;
-        while(Time.realtimeSinceStartup - startTime < 0.2f)
+        while(Time.realtimeSinceStartup - startTime < 0.3f)
         {
             yield return null;
         }

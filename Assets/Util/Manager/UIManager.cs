@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
+using UnityEngine.Experimental.AI;
 using UnityEngine.UI;
 using Util.Manager;
 using static UnityEditor.Experimental.GraphView.GraphView;
@@ -21,6 +23,11 @@ public class UIManager : MonoBehaviour
     private Image[] _bossHeartImages;
     private int _bossHPId;
     private int _playerHPId;
+
+    private float _shakeTense = 8;
+    private float _shakeTime = 1;
+    private RectTransform[] _rectTransform;
+    private Vector3[] _originalPosition;
 
     public void Init(GameManager gameManager)
     {
@@ -60,13 +67,21 @@ public class UIManager : MonoBehaviour
         _playerHPImages = new GameObject[playerHP];
         _bossHPImages = new GameObject[boss.HP()];
         _bossHeartImages = new Image[3];
+        _rectTransform = new RectTransform[2];
+        _originalPosition = new Vector3[2];
         if(_inGameUI == null)
         {
             _inGameUI = Instantiate(_inGameUIPrefabs);
             _playerHPUI = _inGameUI.transform.GetChild(0).gameObject;
+            _rectTransform[0] = _playerHPUI.GetComponent<RectTransform>();
             _bossHPUI = _inGameUI.transform.GetChild(1).gameObject;
+            _rectTransform[1] = _bossHPUI.GetComponent<RectTransform>();
             _gameClearUI = _inGameUI.transform.GetChild(2).GetComponent<GameClearUI>();
             _gameOverUI = _inGameUI.transform.GetChild(3).GetComponent<GameOverUI>();
+            for(int i = 0; i < 2; ++ i)
+            {
+                _originalPosition[i] = _rectTransform[i].position;
+            }
         }
         for(int i = 0; i < playerHP; ++i)
         {
@@ -94,5 +109,35 @@ public class UIManager : MonoBehaviour
     public void ShowGameClearUI()
     {
         _gameClearUI.gameObject.SetActive(true);
+    }
+    
+    public void ShakeUI()
+    {
+        StartCoroutine(Shake());
+    }
+
+    IEnumerator Shake()
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < _shakeTime)
+        {
+            float x = Random.Range(-1f, 1f) * _shakeTense;
+            float y = Random.Range(-1f, 1f) * _shakeTense;
+                
+            for (int i = 0; i < 2; ++i)
+            {
+                _rectTransform[i].position = _originalPosition[i] + new Vector3(x, y, 0f);
+            }
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+
+        for (int i = 0; i < 2; ++i)
+        {
+            _rectTransform[i].position = _originalPosition[i];
+        }
     }
 }
