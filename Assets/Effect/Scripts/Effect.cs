@@ -11,9 +11,8 @@ public class Effect : MonoBehaviour
     {
         _currentPool = objectPool;
     }
-
     public void OnAnimFinish()
     {
         _currentPool.Release(this);
-    }
+    } 
 }

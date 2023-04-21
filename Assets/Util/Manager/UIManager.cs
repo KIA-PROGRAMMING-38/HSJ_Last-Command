@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
     private GameObject _playerHPUI;
     private GameObject _bossHPUI;
     private GameOverUI _gameOverUI;
+    private Image[] _playerHurtEffect;
     public GameClearUI _gameClearUI { get; private set; }
 
     private GameObject[] _playerHPImages;
@@ -29,6 +30,8 @@ public class UIManager : MonoBehaviour
     private float _shakeTime = 1;
     private RectTransform[] _rectTransform;
     private Vector3[] _originalPosition;
+
+    private float _breath;
 
     public void Init(GameManager gameManager)
     {
@@ -100,6 +103,7 @@ public class UIManager : MonoBehaviour
             _bossHeartImages[i] = boss.transform.GetChild(i + 1).GetChild(0).GetComponent<Image>();
         }
         _bossHeartText = boss.transform.GetChild(3).GetChild(1).GetComponent<Text>();
+        _playerHurtEffect = _inGameUI.transform.GetChild(4).GetComponentsInChildren<Image>();
     }
     public void RemoveUI()
     {
@@ -120,7 +124,13 @@ public class UIManager : MonoBehaviour
     {
         StartCoroutine(Shake());
     }
-
+    public void BreathUI()
+    {
+        foreach(Image image in _playerHurtEffect)
+        {
+            StartCoroutine(EffectBreath(image));
+        }
+    }
     IEnumerator Shake()
     {
         float elapsedTime = 0f;
@@ -144,5 +154,57 @@ public class UIManager : MonoBehaviour
         {
             _rectTransform[i].position = _originalPosition[i];
         }
+    }
+
+    IEnumerator EffectBreath(Image image)
+    {
+        image.gameObject.SetActive(true);
+        WaitForSeconds wait = new WaitForSeconds(1f);
+
+        image.color = new Color(
+            image.color.r,
+            image.color.g,
+            image.color.b,
+            255f);
+
+        while (image.color.a > 10)
+        {
+            image.color = new Color(
+                image.color.r,
+                image.color.g,
+                image.color.b,
+                image.color.a - (_breath * Time.deltaTime));
+
+            yield return null;
+        }
+
+        image.color = new Color(
+            image.color.r,
+            image.color.g,
+            image.color.b,
+            10f);
+
+        yield return wait;
+
+        while (image.color.a < 255)
+        {
+            image.color = new Color(
+                image.color.r,
+                image.color.g,
+                image.color.b,
+                image.color.a + (_breath * Time.deltaTime));
+
+            yield return null;
+        }
+
+        image.color = new Color(
+            image.color.r,
+            image.color.g,
+            image.color.b,
+            255f);
+
+        yield return wait;
+
+        image.gameObject.SetActive(false);
     }
 }

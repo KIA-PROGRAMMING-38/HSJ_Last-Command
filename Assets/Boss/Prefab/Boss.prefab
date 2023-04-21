@@ -777,6 +777,7 @@ MonoBehaviour:
   _diminishingTime: 3
   _Hp: 5
   _damageEffect: {fileID: 3220638040115060672, guid: 1392deeb6a1de124ba2e0532d2037888, type: 3}
+  _hitEffect: {fileID: 5027869537162949470, guid: fd9174ed23acc354b80c8100d4ba097f, type: 3}
 --- !u!95 &5791679862698614638
 Animator:
   serializedVersion: 5

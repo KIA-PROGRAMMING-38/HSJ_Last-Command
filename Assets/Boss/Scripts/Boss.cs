@@ -33,7 +33,10 @@ public class Boss : MonoBehaviour
     private GameObject _groggyEffect;
 
     [SerializeField] private GameObject _damageEffect;
+    [SerializeField] private GameObject _hitEffect;
     private IObjectPool<Effect> _pool;
+    private IObjectPool<HitEffect> _hitPool;
+    private int _hitEffectNum = 15;
     void Awake()
     {
         ResetSettings();
@@ -91,6 +94,10 @@ public class Boss : MonoBehaviour
             return;
         }
         OnAttackSuccess?.Invoke();
+        for(int i = 0; i < _hitEffectNum; ++ i)
+        {
+            HitEffect hitEffect = _hitPool.Get();
+        }
     }
 
     private void ChangeDamageType()
@@ -153,9 +160,10 @@ public class Boss : MonoBehaviour
 
     private void InitPool()
     {
-        if (_pool == null)
+        if (_pool == null || _hitPool == null)
         {
             _pool = new ObjectPool<Effect>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 8);
+            _hitPool = new ObjectPool<HitEffect>(CreateHit, OnGet, OnRelease, OnDestroyParticle, maxSize: 25);
         }
     }
 
@@ -164,6 +172,12 @@ public class Boss : MonoBehaviour
         Effect particle = Instantiate(_damageEffect, transform.position, transform.rotation).GetComponent<Effect>();
         particle.SetPool(_pool);
         return particle;
+    }
+    private HitEffect CreateHit()
+    {
+        HitEffect effect = Instantiate(_hitEffect, transform.position, transform.rotation).GetComponent<HitEffect>();
+        effect.SetPool(_hitPool, transform);
+        return effect;
     }
 
     private void OnGet(Effect particle)

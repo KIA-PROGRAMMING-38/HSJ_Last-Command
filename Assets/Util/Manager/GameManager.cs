@@ -60,6 +60,8 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnHpDecrease += _uiManager.PlayerHpDecrease;
         _objectManager._player.OnHpDecrease -= _uiManager.ShakeUI;
         _objectManager._player.OnHpDecrease += _uiManager.ShakeUI;
+        _objectManager._player.OnHpDecrease -= _uiManager.BreathUI;
+        _objectManager._player.OnHpDecrease += _uiManager.BreathUI;
         _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease += _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
@@ -102,6 +104,7 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnHpDecrease -= _uiManager.ShakeUI;
         _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
+        _objectManager._player.OnHpDecrease -= _uiManager.BreathUI;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
         _objectManager._boss.OnTempChange -= _uiManager.ChangeTemp;
         _objectManager._boss.OnConfChange -= _uiManager.ChangeConf;
