@@ -49,6 +49,9 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject _hurtEffect;
     private GameObject[] _hurtParticle;
+
+    [SerializeField] private GameObject _dashUIPrefab;
+    private GameObject _dashUI;
     private void Awake()
     {
         _defaultLength = 3;
@@ -78,6 +81,7 @@ public class Player : MonoBehaviour
         _overclockEffect = Instantiate(_overclockEffectPrefab, transform);
         ChangeColor(Color.gray);
         _overclockEffect.SetActive(false);
+        _dashUI = Instantiate(_dashUIPrefab, transform);
         for (int i = _maxLength; i > _defaultLength; --i)
         {
             transform.GetChild(i - 2).gameObject.SetActive(false);

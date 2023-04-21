@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,33 +16,45 @@ public class PlayerInput : MonoBehaviour
     private Down _down = new Down();
 
     [SerializeField] private float _dashWaitTime;
-    private float _lastDashTime;
+    private float _elapsedTime;
     private bool _isDashNoticed;
+
+    public event Action OnDirectionChanged;
+    public event Action OnDashReady;
+    public event Action<float, float> OnWaitDash;
+    public event Action OnDashUsed;
   
     private void Awake()
     {
         _playerDirection = _right;
         _animator = gameObject.GetComponent<Animator>();
         _isDashNoticed = false;
+        _elapsedTime = 0;
     }
 
     private void Update()
     {
+        _elapsedTime += Time.deltaTime;
+
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             _playerDirection = _right;
+            OnDirectionChanged?.Invoke();
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             _playerDirection = _left;
+            OnDirectionChanged?.Invoke();
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             _playerDirection = _up;
+            OnDirectionChanged?.Invoke();
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             _playerDirection = _down;
+            OnDirectionChanged?.Invoke();
         }
 
         if (Input.GetKey(KeyCode.D))
@@ -53,17 +66,23 @@ public class PlayerInput : MonoBehaviour
             _animator.SetBool("isAnalyzing", false);
         }
 
-        if (Time.time > _lastDashTime + _dashWaitTime && !_isDashNoticed)
+        if (_elapsedTime >= _dashWaitTime && !_isDashNoticed)
         {
             Debug.Log("대시 준비완료!");
+            OnDashReady?.Invoke();
             _isDashNoticed = true;
+        }
+        else if(_elapsedTime < _dashWaitTime)
+        {
+            OnWaitDash?.Invoke(_elapsedTime, _dashWaitTime);
         }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            if (Time.time > _lastDashTime + _dashWaitTime)
+            if (_elapsedTime > _dashWaitTime)
             {
-                _lastDashTime = Time.time;
+                _elapsedTime = 0;
+                OnDashUsed?.Invoke();
                 _animator.SetBool("isDashing", true);
                 _isDashNoticed = false;
             }
