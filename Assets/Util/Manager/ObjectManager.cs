@@ -56,6 +56,8 @@ public class ObjectManager : MonoBehaviour
         _boss.OnDamageChange += _player.Invincible;
         _bossGroggy.OnGroggyEnd -= _boss.EndGroggy;
         _bossGroggy.OnGroggyEnd += _boss.EndGroggy;
+        _bossGroggy.OnGroggyEnd -= _player.Invincible;
+        _bossGroggy.OnGroggyEnd += _player.Invincible;
         _boss.OnDie -= ClearObject;
         _boss.OnDie += ClearObject;
         _boss.OnDie -= ClearPlayer;
@@ -79,6 +81,7 @@ public class ObjectManager : MonoBehaviour
     {
         _boss.OnDamageChange -= _player.Invincible;
         _bossGroggy.OnGroggyEnd -= _boss.EndGroggy;
+        _bossGroggy.OnGroggyEnd -= _player.Invincible;
         _boss.OnDie -= ClearObject;
         _boss.OnDie -= ClearPlayer;
         _player.OnDie -= ClearObject;

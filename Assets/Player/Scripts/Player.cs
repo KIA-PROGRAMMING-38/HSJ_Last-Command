@@ -52,6 +52,12 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject _dashUIPrefab;
     private GameObject _dashUI;
+
+    [SerializeField] private GameObject _invinciblePrefab;
+    private GameObject _invincible;
+    public event Action OnInvincibleStart;
+    public event Action OnInvincibleEnd;
+
     private void Awake()
     {
         _defaultLength = 3;
@@ -93,6 +99,18 @@ public class Player : MonoBehaviour
         {
             _hurtParticle[i].SetActive(false);
         }
+        for (int i = 1; i < _maxLength; ++i)
+        {
+            _invincible = Instantiate(_invinciblePrefab, _energies[i].transform);
+            _invincible.SetActive(false);
+        }
+        _invincible = Instantiate(_invinciblePrefab, transform);
+        _invincible.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
     }
     public void Init(ObjectManager objectManager)
     {
@@ -177,9 +195,13 @@ public class Player : MonoBehaviour
     {
         Debug.Log("公利 矫累");
         gameObject.layer = LayerMask.NameToLayer("Invincible");
+        _invincible.SetActive(true);
+        OnInvincibleStart?.Invoke();
         yield return new WaitForSeconds(_invincibleTime);
         Debug.Log("公利 场");
         gameObject.layer = LayerMask.NameToLayer("Player");
+        _invincible.SetActive(false);
+        OnInvincibleEnd?.Invoke();
     }
 
     public void Damaged()

@@ -27,7 +27,7 @@ public class PlayerAnalyze : PlayerState
         _attacked = false;
         _activeEnergyCount = 0;
 
-        for (int i = 0; i < _playerTransform.childCount - 2; ++i)
+        for (int i = 0; i < _playerTransform.childCount - 3; ++i)
         {
             _followingHead = _playerTransform.GetChild(i).gameObject;
             _followingHead.transform.localPosition = new Vector2(0, 0);

@@ -11,8 +11,18 @@ public class Head : MonoBehaviour
     private Queue<Vector2> _expectedPaths;
     private bool _isDead = false;
 
+    private Player _player;
+    private GameObject _invincible;
     void OnEnable()
     {
+        if(_player == null)
+        {
+            _player = GetComponentInParent<Player>();
+            _player.OnInvincibleStart -= Invincible;
+            _player.OnInvincibleStart += Invincible;
+            _player.OnInvincibleEnd -= EndInvincible;
+            _player.OnInvincibleEnd += EndInvincible;
+        }
         if (_expectedPaths == null)
         {
             _expectedPaths = new Queue<Vector2>();
@@ -46,6 +56,14 @@ public class Head : MonoBehaviour
         ClearPath();
     }
 
+    private void OnDestroy()
+    {
+        if(_player != null)
+        {
+            _player.OnInvincibleStart -= Invincible;
+            _player.OnInvincibleEnd -= EndInvincible;
+        }
+    }
     public void ClearPath()
     {
         _expectedPaths?.Clear();
@@ -61,5 +79,21 @@ public class Head : MonoBehaviour
     public void Die()
     {
         _isDead = true;
+    }
+    public void Invincible()
+    {
+        if(_invincible == null)
+        {
+            _invincible = transform.GetChild(0).gameObject;
+        }
+        _invincible.SetActive(true);
+    }
+    public void EndInvincible()
+    {
+        if (_invincible == null)
+        {
+            _invincible = transform.GetChild(0).gameObject;
+        }
+        _invincible.SetActive(false);
     }
 }
