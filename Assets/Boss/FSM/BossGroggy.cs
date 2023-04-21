@@ -40,9 +40,9 @@ public class BossGroggy : StateMachineBehaviour
         {
             animator.SetBool("isGroggy", false);
             Debug.Log("АјАн!");
+            OnGroggyEnd?.Invoke();
             animator.GetComponent<Boss>().Damaged();
             Effect particle = _pool.Get();
-            OnGroggyEnd?.Invoke();
         }
 
         _elapsedTime += Time.deltaTime;

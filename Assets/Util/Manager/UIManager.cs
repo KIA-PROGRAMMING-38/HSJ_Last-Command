@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour
     private GameObject[] _bossHPImages;
 
     private Image[] _bossHeartImages;
+    private Text _bossHeartText;
     private int _bossHPId;
     private int _playerHPId;
 
@@ -48,6 +49,8 @@ public class UIManager : MonoBehaviour
     {
         _bossHeartImages[1].fillAmount = Mathf.Min(1, (tempDamage + confDamage) / treshold);
         Debug.Log(_bossHeartImages[1].fillAmount);
+        _bossHeartText.text = $"{(int)(_bossHeartImages[1].fillAmount * 100)}%";
+
     }
     public void ChangeConf(int totalDamage, float treshold)
     {
@@ -61,6 +64,7 @@ public class UIManager : MonoBehaviour
     {
         _bossHeartImages[1].fillAmount = 0;
         _bossHeartImages[2].fillAmount = 0;
+        _bossHeartText.text = "0%";
     }
     public void SetUI(int playerHP, Boss boss)
     {
@@ -95,6 +99,7 @@ public class UIManager : MonoBehaviour
         {
             _bossHeartImages[i] = boss.transform.GetChild(i + 1).GetChild(0).GetComponent<Image>();
         }
+        _bossHeartText = boss.transform.GetChild(3).GetChild(1).GetComponent<Text>();
     }
     public void RemoveUI()
     {
