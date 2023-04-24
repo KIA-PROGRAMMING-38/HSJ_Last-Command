@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 using static UnityEngine.ParticleSystem;
+using Util.Enum;
 
 public class Boss : MonoBehaviour
 {
@@ -51,12 +52,14 @@ public class Boss : MonoBehaviour
         {
             if (_temporaryDamageGain > 0)
             {
+                SoundManager.instance.Play(SoundID.BossDamaged);
                 ChangeDamageType();
             }
         }
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet") && !_isOnGroggy)
         {
+            SoundManager.instance.Play(SoundID.BossDamaged);
             GetTempDamage();
         }
 
@@ -89,6 +92,7 @@ public class Boss : MonoBehaviour
         _Hp--;
         if (_Hp <= 0)
         {
+            SoundManager.instance.Play(SoundID.BossDead);
             OnDie?.Invoke();
             transform.Find("BossDie").gameObject.SetActive(true);
             return;
@@ -129,6 +133,7 @@ public class Boss : MonoBehaviour
 
     private void EnterGroggyState()
     {
+        SoundManager.instance.Play(SoundID.BossGroggy);
         GetComponent<Animator>().SetBool("isGroggy", true);
         transform.Find("Circle").gameObject.SetActive(true);
         _isOnGroggy = true;

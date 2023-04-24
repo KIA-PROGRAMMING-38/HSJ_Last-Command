@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEngine.Pool;
 using static UnityEngine.ParticleSystem;
 using UnityEngine.UIElements;
+using Util.Enum;
 
 public class Player : MonoBehaviour
 {
@@ -118,6 +119,7 @@ public class Player : MonoBehaviour
     }
     public void EarnEnergy()
     {
+        SoundManager.instance.Play(SoundID.PlayerEarnEnergy);
         if (_currentLength < _maxLength)
         {
             _currentLength++;
@@ -167,6 +169,7 @@ public class Player : MonoBehaviour
     {
         if (!_isOverclocking)
         {
+            SoundManager.instance.Play(SoundID.PlayerOverclock);
             OnOverclock?.Invoke();
             _overclockEffect.SetActive(true);
             ChangeColor(_overclockColor);
@@ -209,6 +212,7 @@ public class Player : MonoBehaviour
         _Hp--;
         if(_Hp <= 0)
         {
+            SoundManager.instance.Play(SoundID.PlayerDead);
             Die();
             return;
         }
@@ -217,6 +221,7 @@ public class Player : MonoBehaviour
             _hurtParticle[i].transform.position = transform.position;
             _hurtParticle[i].SetActive(true);
         }
+        SoundManager.instance.Play(SoundID.PlayerDamage);
         SpreadEnergy();
         ApplyDamage();
     }

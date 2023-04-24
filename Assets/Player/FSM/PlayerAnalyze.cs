@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
+using Util.Enum;
+
 public class PlayerAnalyze : PlayerState
 {
     private int _activeEnergyCount;
@@ -73,6 +75,7 @@ public class PlayerAnalyze : PlayerState
         if (_player.IsEnergyCharged())
         {
             Debug.Log("АјАн!");
+            SoundManager.instance.Play(SoundID.PlayerShoot);
             _player.UseEnergy();
             Bullet bullet = _pool.Get();
             --_activeEnergyCount;

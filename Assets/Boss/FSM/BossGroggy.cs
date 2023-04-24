@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
+using Util.Enum;
 using Random = UnityEngine.Random;
 
 public class BossGroggy : StateMachineBehaviour
@@ -38,6 +39,8 @@ public class BossGroggy : StateMachineBehaviour
     {
        if (Input.GetKeyDown(KeyCode.F) && _isOnZone)
         {
+            SoundManager.instance.Play(SoundID.PlayerAttack);
+            SoundManager.instance.Play(SoundID.BossHit);
             animator.SetBool("isGroggy", false);
             Debug.Log("АјАн!");
             OnGroggyEnd?.Invoke();

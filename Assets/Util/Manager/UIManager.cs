@@ -15,7 +15,10 @@ public class UIManager : MonoBehaviour
     private GameObject _playerHPUI;
     private GameObject _bossHPUI;
     private GameOverUI _gameOverUI;
+
+    private GameObject _playerHurt;
     private Image[] _playerHurtEffect;
+    private float _breathTime = 0.4f;
     public GameClearUI _gameClearUI { get; private set; }
 
     private GameObject[] _playerHPImages;
@@ -30,8 +33,6 @@ public class UIManager : MonoBehaviour
     private float _shakeTime = 1;
     private RectTransform[] _rectTransform;
     private Vector3[] _originalPosition;
-
-    private float _breath;
 
     public void Init(GameManager gameManager)
     {
@@ -71,13 +72,14 @@ public class UIManager : MonoBehaviour
     }
     public void SetUI(int playerHP, Boss boss)
     {
-        _playerHPImages = new GameObject[playerHP];
-        _bossHPImages = new GameObject[boss.HP()];
-        _bossHeartImages = new Image[3];
-        _rectTransform = new RectTransform[2];
-        _originalPosition = new Vector3[2];
         if(_inGameUI == null)
         {
+            _playerHPImages = new GameObject[playerHP];
+            _bossHPImages = new GameObject[boss.HP()];
+            _bossHeartImages = new Image[3];
+            _rectTransform = new RectTransform[2];
+            _originalPosition = new Vector3[2];
+            _playerHurtEffect = new Image[2];
             _inGameUI = Instantiate(_inGameUIPrefabs);
             _playerHPUI = _inGameUI.transform.GetChild(0).gameObject;
             _rectTransform[0] = _playerHPUI.GetComponent<RectTransform>();
@@ -85,6 +87,7 @@ public class UIManager : MonoBehaviour
             _rectTransform[1] = _bossHPUI.GetComponent<RectTransform>();
             _gameClearUI = _inGameUI.transform.GetChild(2).GetComponent<GameClearUI>();
             _gameOverUI = _inGameUI.transform.GetChild(3).GetComponent<GameOverUI>();
+            _playerHurt = _inGameUI.transform.GetChild(4).gameObject;
             for(int i = 0; i < 2; ++ i)
             {
                 _originalPosition[i] = _rectTransform[i].position;
@@ -103,7 +106,10 @@ public class UIManager : MonoBehaviour
             _bossHeartImages[i] = boss.transform.GetChild(i + 1).GetChild(0).GetComponent<Image>();
         }
         _bossHeartText = boss.transform.GetChild(3).GetChild(1).GetComponent<Text>();
-        _playerHurtEffect = _inGameUI.transform.GetChild(4).GetComponentsInChildren<Image>();
+        for(int i = 0; i < 2; ++i)
+        {
+            _playerHurtEffect[i] = _playerHurt.transform.GetChild(i).GetComponent<Image>();
+        }
     }
     public void RemoveUI()
     {
@@ -126,10 +132,8 @@ public class UIManager : MonoBehaviour
     }
     public void BreathUI()
     {
-        foreach(Image image in _playerHurtEffect)
-        {
-            StartCoroutine(EffectBreath(image));
-        }
+        _playerHurt.SetActive(true);
+        StartCoroutine(EffectBreath());
     }
     IEnumerator Shake()
     {
@@ -156,55 +160,33 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    IEnumerator EffectBreath(Image image)
+    IEnumerator EffectBreath()
     {
-        image.gameObject.SetActive(true);
-        WaitForSeconds wait = new WaitForSeconds(1f);
-
-        image.color = new Color(
-            image.color.r,
-            image.color.g,
-            image.color.b,
-            255f);
-
-        while (image.color.a > 10)
+        float elapsedTime = 0;
+        foreach (Image image in _playerHurtEffect)
         {
-            image.color = new Color(
-                image.color.r,
-                image.color.g,
-                image.color.b,
-                image.color.a - (_breath * Time.deltaTime));
-
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 0);
+        }
+        while (_playerHurtEffect[0].color.a < 1)
+        {
+            elapsedTime += Time.deltaTime;
+            foreach (Image image in _playerHurtEffect)
+            {
+                image.color = new Color(image.color.r, image.color.g, image.color.b, Mathf.Min(1, elapsedTime / _breathTime));
+            }
             yield return null;
         }
 
-        image.color = new Color(
-            image.color.r,
-            image.color.g,
-            image.color.b,
-            10f);
-
-        yield return wait;
-
-        while (image.color.a < 255)
+        elapsedTime = 0;
+        while (_playerHurtEffect[0].color.a > 0)
         {
-            image.color = new Color(
-                image.color.r,
-                image.color.g,
-                image.color.b,
-                image.color.a + (_breath * Time.deltaTime));
-
+            elapsedTime += Time.deltaTime;
+            foreach (Image image in _playerHurtEffect)
+            {
+                image.color = new Color(image.color.r, image.color.g, image.color.b, Mathf.Max(0, 1 - (elapsedTime / _breathTime)));
+            }
             yield return null;
         }
-
-        image.color = new Color(
-            image.color.r,
-            image.color.g,
-            image.color.b,
-            255f);
-
-        yield return wait;
-
-        image.gameObject.SetActive(false);
+        _playerHurt.SetActive(false);
     }
 }

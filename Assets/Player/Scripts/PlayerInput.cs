@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Util.Direction;
-
+using Util.Enum;
 public class PlayerInput : MonoBehaviour
 {
     private Animator _animator;
@@ -69,6 +69,7 @@ public class PlayerInput : MonoBehaviour
         if (_elapsedTime >= _dashWaitTime && !_isDashNoticed)
         {
             Debug.Log("대시 준비완료!");
+            SoundManager.instance.Play(SoundID.PlayerDashRestore);
             OnDashReady?.Invoke();
             _isDashNoticed = true;
         }
@@ -81,6 +82,7 @@ public class PlayerInput : MonoBehaviour
         {
             if (_elapsedTime > _dashWaitTime)
             {
+                SoundManager.instance.Play(SoundID.PlayerDash);
                 _elapsedTime = 0;
                 OnDashUsed?.Invoke();
                 _animator.SetBool("isDashing", true);

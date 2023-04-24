@@ -8,9 +8,9 @@ using UnityEngine.UI;
 public class SoundButton : ControlButton
 {
     private Image[] _box;
-    private int _defaultId = 4;
-    private int _boxLength = 8;
-    private int _currentId;
+    private int _defaultId = 7;
+    protected int _boxLength = 8;
+    protected int _currentId;
     protected override void Awake()
     {
         _box = new Image[_boxLength];

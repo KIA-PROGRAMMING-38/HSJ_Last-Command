@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Util.Enum;
 
 public abstract class Menu : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public abstract class Menu : MonoBehaviour
     private RectTransform[] _menuTransform;
     private GameObject _select;
 
-    private void Awake()
+    protected void Awake()
     {
         _currentID = 0;
         _menuNum = _menuButtons.Length;
@@ -50,6 +51,7 @@ public abstract class Menu : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Return))
         {
+            SoundManager.instance.Play(SoundID.UIClick);
             _menuButtons[_currentID].onClick.Invoke();
         }
         if (_menuText[0] != null)

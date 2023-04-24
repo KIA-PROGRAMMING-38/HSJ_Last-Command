@@ -51,13 +51,4 @@ public class SettingMenu : Menu
     {
         _mainMenu = mainMenu;
     }
-
-    public void ChangeMusicVolume()
-    {
-       
-    }
-    public void ChangeBackground()
-    {
-
-    }
 }
