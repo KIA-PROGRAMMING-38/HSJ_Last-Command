@@ -68,6 +68,8 @@ MonoBehaviour:
   _earnEnergyBoxPrefab: {fileID: 6575484213161770266, guid: 6e3255595cc625247b358b55a308266e, type: 3}
   _invinciblePrefab: {fileID: 8900207143471303603, guid: e12a4a966bbf1984cb49cc47af584695, type: 3}
   _analyzeBoxPrefab: {fileID: 8199328149899532212, guid: 68f17b0d7cde7ac40bfaf0a80c702d0b, type: 3}
+  _startPointPrefab: {fileID: 4546426950625202763, guid: aa6011d2fb0152d4b8892bf8828758f1, type: 3}
+  _startTextPrefab: {fileID: 2686665627216931969, guid: 3d813e13976e2f64383bee67b21f0fa1, type: 3}
 --- !u!95 &3088826191711575731
 Animator:
   serializedVersion: 5

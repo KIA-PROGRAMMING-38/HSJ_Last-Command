@@ -69,6 +69,10 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _analyzeBoxPrefab;
     private GameObject _analyzeBox;
 
+    [SerializeField] private GameObject _startPointPrefab;
+    private GameObject _startPoint;
+    [SerializeField] private GameObject _startTextPrefab;
+    private GameObject _startText;
     private void Awake()
     {
         _defaultLength = 3;
@@ -126,6 +130,9 @@ public class Player : MonoBehaviour
         _analyzeBox = Instantiate(_analyzeBoxPrefab, transform);
         _analyzeBox.name = "Analyzing Box";
         _analyzeBox.SetActive(false);
+        _startPoint = Instantiate(_startPointPrefab);
+        StartCoroutine(StartTimer());
+        
     }
 
     private void OnDestroy()
@@ -354,5 +361,17 @@ public class Player : MonoBehaviour
 
     public void SetAnalyzeBoxTrue() => _analyzeBox.SetActive(true);
     public void SetAnalyzeBoxFalse() => _analyzeBox.SetActive(false);
+
+    IEnumerator StartTimer()
+    {
+        GetComponent<PlayerInput>().enabled = false;
+        GetComponent<PlayerMovement>().enabled = false;
+        Invincible();
+        yield return new WaitForSeconds(2);
+        GetComponent<PlayerInput>().enabled = true;
+        GetComponent<PlayerMovement>().enabled = true;
+        _startPoint.SetActive(false);
+        _startText = Instantiate(_startTextPrefab);
+    }
 
 }
