@@ -6,6 +6,7 @@ using UnityEngine.Pool;
 public class Missle3 : Missle
 {
     IObjectPool<Missle> _subPool;
+    private List<SubMissle3> _currentSubMissle = new List<SubMissle3>();
     private Vector3 _direction;
     private float _elapsedTime;
     private float _explosionTime = 2;
@@ -15,7 +16,6 @@ public class Missle3 : Missle
     {
         _direction = transform.TransformDirection(Vector3.left);
         _elapsedTime = 0;
-        _angle = 1;
         InitiatePattern();
     }
     private void FixedUpdate()
@@ -24,7 +24,10 @@ public class Missle3 : Missle
         {
             for(int i = 0; i < 8; ++ i)
             {
-                Missle subMissle = _subPool.Get();
+                SubMissle3 subMissile = _subPool.Get() as SubMissle3;
+                subMissile.transform.position = transform.position;
+                subMissile.SetDirection(Quaternion.Euler(0, 0, i * 45f) * Vector3.left);
+                _currentSubMissle.Add(subMissile);
             }
             ReturnMissle();
         }
@@ -51,7 +54,7 @@ public class Missle3 : Missle
     {
         Missle missle = Instantiate(_subMissle).GetComponent<Missle>();
         ++_angle;
-        missle.SetPool(_subPool);
+        missle.SetPool(_subPool as IObjectPool<Missle>);
         return missle;
     }
     private void OnGetMissle(Missle missle)
@@ -64,9 +67,21 @@ public class Missle3 : Missle
     private void OnReleaseMissle(Missle missle)
     {
         missle.gameObject.SetActive(false);
+        _currentSubMissle.Remove(missle as SubMissle3);
     }
     private void OnDestroyMissle(Missle missle)
     {
         Destroy(missle.gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        _subPool.Clear();
+        foreach (Missle missle in _currentSubMissle)
+        {
+            Destroy(missle.gameObject);
+        }
+        _currentSubMissle.Clear();
+
     }
 }
