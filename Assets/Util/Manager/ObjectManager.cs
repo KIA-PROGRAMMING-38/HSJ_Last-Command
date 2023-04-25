@@ -72,6 +72,10 @@ public class ObjectManager : MonoBehaviour
         _player.OnOverclockEnd += _playerAnalyze.OnOverclockEnd;
         _player.OnHpDecrease -= _playerAnalyze.Damaged;
         _player.OnHpDecrease += _playerAnalyze.Damaged;
+        _playerAnalyze.OnAnalyze -= _player.SetAnalyzeBoxTrue;
+        _playerAnalyze.OnAnalyze += _player.SetAnalyzeBoxTrue;
+        _playerAnalyze.OffAnalyzing -= _player.SetAnalyzeBoxFalse;
+        _playerAnalyze.OffAnalyzing += _player.SetAnalyzeBoxFalse;
         _player.OnOverclock -= _playerIdle.OnOverclock;
         _player.OnOverclock += _playerIdle.OnOverclock;
         _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
@@ -92,6 +96,9 @@ public class ObjectManager : MonoBehaviour
         _player.OnHpDecrease -= _playerAnalyze.Damaged;
         _player.OnOverclock -= _playerIdle.OnOverclock;
         _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
+
+        _playerAnalyze.OnAnalyze -= _player.SetAnalyzeBoxTrue;
+        _playerAnalyze.OffAnalyzing -= _player.SetAnalyzeBoxFalse;
     }
     private void ClearObject()
     {

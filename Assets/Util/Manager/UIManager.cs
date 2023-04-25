@@ -38,6 +38,8 @@ public class UIManager : MonoBehaviour
     private char[] _earnedEnergy;
     private int _maxLength;
 
+    private Image _analyzeBox;
+
     public void Init(GameManager gameManager)
     {
         _gameManager = gameManager;
@@ -98,6 +100,8 @@ public class UIManager : MonoBehaviour
             _earnEnergyBox = player.transform.Find("Earn Energy Box").GetChild(0).GetComponentInChildren<Text>();
             _earnedEnergy = new char[player.maxLength - 3];
             _maxLength = player.maxLength - 3;
+
+            _analyzeBox = player.transform.Find("Analyzing Box").GetChild(0).GetChild(2).GetComponent<Image>();
         }
         for(int i = 0; i < player.HP(); ++i)
         {
@@ -207,5 +211,10 @@ public class UIManager : MonoBehaviour
             _earnedEnergy[i] = '.';
         }
         _earnEnergyBox.text = $"loading {new string(_earnedEnergy)}";
+    }
+
+    public void ChangeFill(float offsetTime)
+    {
+        _analyzeBox.fillAmount = offsetTime;
     }
 }

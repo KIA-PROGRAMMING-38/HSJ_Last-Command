@@ -65,6 +65,10 @@ public class Player : MonoBehaviour
     private GameObject _invincible;
     public event Action OnInvincibleStart;
     public event Action OnInvincibleEnd;
+
+    [SerializeField] private GameObject _analyzeBoxPrefab;
+    private GameObject _analyzeBox;
+
     private void Awake()
     {
         _defaultLength = 3;
@@ -119,6 +123,9 @@ public class Player : MonoBehaviour
         _earnEnergyBox = Instantiate(_earnEnergyBoxPrefab, transform);
         _earnEnergyBox.SetActive(false);
         _earnEnergyBox.name = "Earn Energy Box";
+        _analyzeBox = Instantiate(_analyzeBoxPrefab, transform);
+        _analyzeBox.name = "Analyzing Box";
+        _analyzeBox.SetActive(false);
     }
 
     private void OnDestroy()
@@ -344,4 +351,8 @@ public class Player : MonoBehaviour
             _energies[i].GetComponent<SpriteRenderer>().color = color;
         }
     }
+
+    public void SetAnalyzeBoxTrue() => _analyzeBox.SetActive(true);
+    public void SetAnalyzeBoxFalse() => _analyzeBox.SetActive(false);
+
 }

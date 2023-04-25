@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 using Util.Enum;
+using System;
 
 public class PlayerAnalyze : PlayerState
 {
@@ -20,6 +20,10 @@ public class PlayerAnalyze : PlayerState
     private GameObject _followingHead;
 
     private IObjectPool<Bullet> _pool;
+
+    public event Action<float> OnAnalyzing;
+    public event Action OnAnalyze;
+    public event Action OffAnalyzing;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         InitSettings(animator);
@@ -28,7 +32,6 @@ public class PlayerAnalyze : PlayerState
         _attackStartTime = 0;
         _attacked = false;
         _activeEnergyCount = 0;
-
         for (int i = 0; i < _player.maxLength - 1; ++i)
         {
             _followingHead = _playerTransform.GetChild(i).gameObject;
@@ -44,6 +47,7 @@ public class PlayerAnalyze : PlayerState
         {
             _movement.ChangeState(this);
         }
+        OnAnalyze?.Invoke();
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -58,7 +62,10 @@ public class PlayerAnalyze : PlayerState
         {
             _attackStartTime += Time.deltaTime;
         }
-
+        if(_activeEnergyCount > 2)
+        {
+            OnAnalyzing?.Invoke(Mathf.Min(_attackStartTime / _attackWaitTime, 1));
+        }
     }
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -71,6 +78,7 @@ public class PlayerAnalyze : PlayerState
         {
             _player.EndOverclock();
         }
+        OffAnalyzing?.Invoke();
     }
     void Attack()
     {
