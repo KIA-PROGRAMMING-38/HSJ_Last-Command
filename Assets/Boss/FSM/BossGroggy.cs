@@ -33,7 +33,6 @@ public class BossGroggy : StateMachineBehaviour
             _attackZone.OffZone += isOffZone;
         }
         _elapsedTime = 0;
-        Debug.Log("그로기!");
     }
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -42,7 +41,6 @@ public class BossGroggy : StateMachineBehaviour
             SoundManager.instance.Play(SoundID.PlayerAttack);
             SoundManager.instance.Play(SoundID.BossHit);
             animator.SetBool("isGroggy", false);
-            Debug.Log("공격!");
             OnGroggyEnd?.Invoke();
             animator.GetComponent<Boss>().Damaged();
             Effect particle = _pool.Get();
@@ -55,7 +53,6 @@ public class BossGroggy : StateMachineBehaviour
         {
             animator.SetBool("isGroggy", false);
             OnGroggyEnd?.Invoke();
-            Debug.Log("그로기 끝..");
         }
     }
 

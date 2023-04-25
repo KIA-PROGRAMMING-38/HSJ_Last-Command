@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _snakeSprite;
     public int _defaultLength;
     [SerializeField] private int _maxLength;
+    public int maxLength { get { return _maxLength; } }
     public int _currentLength;
     [SerializeField] private int _frameDelay;
 
@@ -28,6 +29,7 @@ public class Player : MonoBehaviour
     private PlayerAnalyze _analyze;
     IObjectPool<LostEnergy> _pool;
     [SerializeField] private LostEnergy _lostEnergy;
+    public event Action<int> OnEarnEnergy;
 
     public event Action OnOverclock;
     public event Action OnOverclockEnd;
@@ -54,11 +56,15 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _dashUIPrefab;
     private GameObject _dashUI;
 
+    [SerializeField] private GameObject _overclockBoxPrefab;
+    [SerializeField] private GameObject _earnEnergyBoxPrefab;
+    private GameObject _overclockBox;
+    private GameObject _earnEnergyBox;
+
     [SerializeField] private GameObject _invinciblePrefab;
     private GameObject _invincible;
     public event Action OnInvincibleStart;
     public event Action OnInvincibleEnd;
-
     private void Awake()
     {
         _defaultLength = 3;
@@ -107,6 +113,12 @@ public class Player : MonoBehaviour
         }
         _invincible = Instantiate(_invinciblePrefab, transform);
         _invincible.SetActive(false);
+
+        _overclockBox = Instantiate(_overclockBoxPrefab, transform);
+        _overclockBox.SetActive(false);
+        _earnEnergyBox = Instantiate(_earnEnergyBoxPrefab, transform);
+        _earnEnergyBox.SetActive(false);
+        _earnEnergyBox.name = "Earn Energy Box";
     }
 
     private void OnDestroy()
@@ -130,6 +142,8 @@ public class Player : MonoBehaviour
             else
             {
                 transform.GetChild(_currentLength - 2).gameObject.SetActive(true);
+                OnEarnEnergy?.Invoke(_currentLength - 3);
+                _earnEnergyBox.SetActive(true);
             }
             _energy.Push(true);
             Debug.Log(_currentLength);
@@ -170,11 +184,11 @@ public class Player : MonoBehaviour
         if (!_isOverclocking)
         {
             SoundManager.instance.Play(SoundID.PlayerOverclock);
+            _overclockBox.SetActive(true);
             OnOverclock?.Invoke();
             _overclockEffect.SetActive(true);
             ChangeColor(_overclockColor);
             _isOverclocking = true;
-            Debug.Log("오버클럭!");
         }
     }
     public void EndOverclock()
@@ -185,7 +199,6 @@ public class Player : MonoBehaviour
             _overclockEffect.SetActive(false);
             ChangeColor(Color.gray);
             _isOverclocking = false;
-            Debug.Log("오버클럭 해제");
         }
     }
 
@@ -196,12 +209,10 @@ public class Player : MonoBehaviour
 
     IEnumerator OnInvincible()
     {
-        Debug.Log("무적 시작");
         gameObject.layer = LayerMask.NameToLayer("Invincible");
         _invincible.SetActive(true);
         OnInvincibleStart?.Invoke();
         yield return new WaitForSeconds(_invincibleTime);
-        Debug.Log("무적 끝");
         gameObject.layer = LayerMask.NameToLayer("Player");
         _invincible.SetActive(false);
         OnInvincibleEnd?.Invoke();

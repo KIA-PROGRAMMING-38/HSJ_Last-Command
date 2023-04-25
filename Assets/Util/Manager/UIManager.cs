@@ -34,6 +34,10 @@ public class UIManager : MonoBehaviour
     private RectTransform[] _rectTransform;
     private Vector3[] _originalPosition;
 
+    private Text _earnEnergyBox;
+    private char[] _earnedEnergy;
+    private int _maxLength;
+
     public void Init(GameManager gameManager)
     {
         _gameManager = gameManager;
@@ -52,7 +56,6 @@ public class UIManager : MonoBehaviour
     public void ChangeTemp(int tempDamage, int confDamage, float treshold)
     {
         _bossHeartImages[1].fillAmount = Mathf.Min(1, (tempDamage + confDamage) / treshold);
-        Debug.Log(_bossHeartImages[1].fillAmount);
         _bossHeartText.text = $"{(int)(_bossHeartImages[1].fillAmount * 100)}%";
 
     }
@@ -70,11 +73,11 @@ public class UIManager : MonoBehaviour
         _bossHeartImages[2].fillAmount = 0;
         _bossHeartText.text = "0%";
     }
-    public void SetUI(int playerHP, Boss boss)
+    public void SetUI(Player player, Boss boss)
     {
         if(_inGameUI == null)
         {
-            _playerHPImages = new GameObject[playerHP];
+            _playerHPImages = new GameObject[player.HP()];
             _bossHPImages = new GameObject[boss.HP()];
             _bossHeartImages = new Image[3];
             _rectTransform = new RectTransform[2];
@@ -92,8 +95,11 @@ public class UIManager : MonoBehaviour
             {
                 _originalPosition[i] = _rectTransform[i].position;
             }
+            _earnEnergyBox = player.transform.Find("Earn Energy Box").GetChild(0).GetComponentInChildren<Text>();
+            _earnedEnergy = new char[player.maxLength - 3];
+            _maxLength = player.maxLength - 3;
         }
-        for(int i = 0; i < playerHP; ++i)
+        for(int i = 0; i < player.HP(); ++i)
         {
             _playerHPImages[i] = _playerHPUI.transform.GetChild(i + 1).GetChild(0).gameObject;
         }
@@ -188,5 +194,18 @@ public class UIManager : MonoBehaviour
             yield return null;
         }
         _playerHurt.SetActive(false);
+    }
+
+    public void ChangeText(int currentLength)
+    {
+    for(int i = 0; i < currentLength; ++i)
+        {
+            _earnedEnergy[i] = 'I';
+        }
+    for(int i = currentLength; i < _maxLength; ++i)
+        {
+            _earnedEnergy[i] = '.';
+        }
+        _earnEnergyBox.text = $"loading {new string(_earnedEnergy)}";
     }
 }

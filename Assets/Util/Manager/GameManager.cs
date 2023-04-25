@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         InitSettings();
-        _uiManager.SetUI(_objectManager._player.HP(), _objectManager._boss);
+        _uiManager.SetUI(_objectManager._player, _objectManager._boss);
         BindEvents();
     }
     private void OnDestroy()
@@ -66,6 +66,8 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnHpDecrease += _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
         _objectManager._player.OnHpDecrease += _stageManager.StopTime;
+        _objectManager._player.OnEarnEnergy -= _uiManager.ChangeText;
+        _objectManager._player.OnEarnEnergy += _uiManager.ChangeText;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
         _objectManager._bossGroggy.OnGroggyEnd += _uiManager.ResetFill;
         _objectManager._boss.OnTempChange -= _uiManager.ChangeTemp;
@@ -105,6 +107,7 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
         _objectManager._player.OnHpDecrease -= _uiManager.BreathUI;
+        _objectManager._player.OnEarnEnergy -= _uiManager.ChangeText;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
         _objectManager._boss.OnTempChange -= _uiManager.ChangeTemp;
         _objectManager._boss.OnConfChange -= _uiManager.ChangeConf;

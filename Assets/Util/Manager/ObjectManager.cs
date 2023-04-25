@@ -76,6 +76,7 @@ public class ObjectManager : MonoBehaviour
         _player.OnOverclock += _playerIdle.OnOverclock;
         _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
         _player.OnOverclockEnd += _playerIdle.OnOverclockEnd;
+
     }
     private void UnbindEvents()
     {

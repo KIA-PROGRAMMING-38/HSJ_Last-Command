@@ -29,7 +29,7 @@ public class PlayerAnalyze : PlayerState
         _attacked = false;
         _activeEnergyCount = 0;
 
-        for (int i = 0; i < _playerTransform.childCount - 3; ++i)
+        for (int i = 0; i < _player.maxLength - 1; ++i)
         {
             _followingHead = _playerTransform.GetChild(i).gameObject;
             _followingHead.transform.localPosition = new Vector2(0, 0);
@@ -39,7 +39,7 @@ public class PlayerAnalyze : PlayerState
                 _followingHead.SetActive(false);
             }
         }
-
+        Debug.Log(_activeEnergyCount - 2);
         if (_movement != null)
         {
             _movement.ChangeState(this);
@@ -51,6 +51,7 @@ public class PlayerAnalyze : PlayerState
         if (_attackStartTime > _attackWaitTime)
         {
             Attack();
+            Debug.Log(_activeEnergyCount - 2);
             _attackStartTime = 0;
         }
         else
@@ -61,6 +62,7 @@ public class PlayerAnalyze : PlayerState
     }
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        Debug.Log(_activeEnergyCount - 2);
         for (int i = 0; i < _activeEnergyCount; ++i)
         {
             _playerTransform.GetChild(i).gameObject.SetActive(true);
@@ -74,7 +76,6 @@ public class PlayerAnalyze : PlayerState
     {
         if (_player.IsEnergyCharged())
         {
-            Debug.Log("АјАн!");
             SoundManager.instance.Play(SoundID.PlayerShoot);
             _player.UseEnergy();
             Bullet bullet = _pool.Get();

@@ -64,6 +64,8 @@ MonoBehaviour:
   _dieParticle: {fileID: 7437988786245679799, guid: e94a1e0f1e19cca4a84608770fe810ec, type: 3}
   _hurtEffect: {fileID: 4326198329854298245, guid: 44c637566f0363e4e8c8c0ad471e7d3a, type: 3}
   _dashUIPrefab: {fileID: 7271345707847155264, guid: ad7e68f94a2f8ff439dc227ac66cd517, type: 3}
+  _overclockBoxPrefab: {fileID: 8583882183990037899, guid: 912ab525ff2ff104dbcbdf2eacafa5a0, type: 3}
+  _earnEnergyBoxPrefab: {fileID: 6575484213161770266, guid: 6e3255595cc625247b358b55a308266e, type: 3}
   _invinciblePrefab: {fileID: 8900207143471303603, guid: e12a4a966bbf1984cb49cc47af584695, type: 3}
 --- !u!95 &3088826191711575731
 Animator:
@@ -151,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dashWaitTime: 2
+  _dashWaitBoxPrefab: {fileID: 2966214954239027762, guid: c54a4391026bf07449dfc1c0e37fccea, type: 3}
 --- !u!58 &3088826191711575734
 CircleCollider2D:
   m_ObjectHideFlags: 0

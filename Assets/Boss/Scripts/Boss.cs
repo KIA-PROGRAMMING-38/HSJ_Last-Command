@@ -63,10 +63,6 @@ public class Boss : MonoBehaviour
             GetTempDamage();
         }
 
-        Debug.Log($"현재 임시 피해 : {_temporaryDamageGain}");
-        Debug.Log($"현재 확정 피해 : {_confirmedDamageGain}");
-        Debug.Log($"총 피해 : {_totalDamageGain}");
-
         if (_totalDamageGain >= _damageTreshold)
         {
             EnterGroggyState();
@@ -106,7 +102,6 @@ public class Boss : MonoBehaviour
 
     private void ChangeDamageType()
     {
-        Debug.Log("임시를 확정으로");
         _confirmedDamageGain += _temporaryDamageGain;
         _temporaryDamageGain = 0;
         _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
@@ -116,7 +111,6 @@ public class Boss : MonoBehaviour
 
     private void GetTempDamage()
     {
-        Debug.Log("임시피해 5!");
         Effect particle = _pool.Get();
         _temporaryDamageGain += 5;
         _totalDamageGain = _temporaryDamageGain + _confirmedDamageGain;
@@ -127,7 +121,6 @@ public class Boss : MonoBehaviour
     {
         _temporaryDamageGain--;
         _elapsedTime = 0;
-        Debug.Log($"현재 임시 피해 : {_temporaryDamageGain}");
         OnTempChange?.Invoke(_temporaryDamageGain, _confirmedDamageGain, _damageTreshold);
     }
 
