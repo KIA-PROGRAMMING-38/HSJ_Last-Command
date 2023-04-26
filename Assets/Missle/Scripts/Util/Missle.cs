@@ -6,6 +6,7 @@ using UnityEngine.Pool;
 public abstract class Missle : MonoBehaviour
 {
     protected IObjectPool<Missle> _currentPool;
+    protected Vector3 _direction;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
@@ -25,4 +26,8 @@ public abstract class Missle : MonoBehaviour
         _currentPool = pool;
     }
     protected abstract void ReturnMissle();
+    public void SetDirection(Vector3 direction)
+    {
+        _direction = direction;
+    }
 }

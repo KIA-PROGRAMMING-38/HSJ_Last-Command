@@ -73,6 +73,7 @@ public class Player : MonoBehaviour
     private GameObject _startPoint;
     [SerializeField] private GameObject _startTextPrefab;
     private GameObject _startText;
+    public event Action OnGameStart;
     private void Awake()
     {
         _defaultLength = 3;
@@ -372,6 +373,8 @@ public class Player : MonoBehaviour
         GetComponent<PlayerMovement>().enabled = true;
         _startPoint.SetActive(false);
         _startText = Instantiate(_startTextPrefab);
+        Invincible();
+        OnGameStart?.Invoke();
     }
 
 }

@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
 
     private void BindEvents()
     {
+        _objectManager._player.OnGameStart -= _patternManager.StartGame;
+        _objectManager._player.OnGameStart += _patternManager.StartGame;
         _objectManager._bossDie.OnAnimationFinished -= _stageManager.GameClear;
         _objectManager._bossDie.OnAnimationFinished += _stageManager.GameClear;
         _objectManager._player.OnDieEnd -= _stageManager.GameOver;
@@ -96,10 +98,13 @@ public class GameManager : MonoBehaviour
 
         _patternManager.OnBossAttack -= _objectManager._boss._bossAttack.PrepareAttack;
         _patternManager.OnBossAttack += _objectManager._boss._bossAttack.PrepareAttack;
+        _patternManager.OnBlockPatternStart -= _objectManager.CreateBlock;
+        _patternManager.OnBlockPatternStart += _objectManager.CreateBlock;
     }
 
     private void UnbindEvents()
     {
+        _objectManager._player.OnGameStart -= _patternManager.StartGame;
         _objectManager._bossDie.OnAnimationFinished -= _stageManager.GameClear;
         _objectManager._boss.OnDie -= _uiManager.RemoveUI;
         _objectManager._boss.OnDie -= _patternManager.DestroyMissiles;
@@ -128,6 +133,7 @@ public class GameManager : MonoBehaviour
         _stageManager.OnGameOver -= _uiManager.ShowGameOverUI;
 
         _patternManager.OnBossAttack -= _objectManager._boss._bossAttack.PrepareAttack;
+        _patternManager.OnBlockPatternStart -= _objectManager.CreateBlock;
     }
 
 }

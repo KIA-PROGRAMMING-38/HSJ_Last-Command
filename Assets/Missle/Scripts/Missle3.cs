@@ -7,16 +7,16 @@ public class Missle3 : Missle
 {
     IObjectPool<Missle> _subPool;
     private List<SubMissle3> _currentSubMissle = new List<SubMissle3>();
-    private Vector3 _direction;
     private float _elapsedTime;
     private float _explosionTime = 2;
     public int _angle { get; private set; }
     [SerializeField] private GameObject _subMissle;
+    private float _speed;
     private void OnEnable()
     {
-        _direction = transform.TransformDirection(Vector3.left);
         _elapsedTime = 0;
         InitiatePattern();
+        _speed = Random.Range(3, 6);
     }
     private void FixedUpdate()
     {
@@ -33,7 +33,7 @@ public class Missle3 : Missle
         }
         else
         {
-            transform.position += _direction * Time.fixedDeltaTime * 2f;
+            transform.position += _direction * Time.fixedDeltaTime * _speed;
             _elapsedTime += Time.deltaTime;
         }
     }

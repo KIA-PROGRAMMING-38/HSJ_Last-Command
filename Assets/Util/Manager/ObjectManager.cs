@@ -10,7 +10,7 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Boss _bossPrefab;
     [SerializeField] private EnergySpawner _energySpawnerPrefab;
-    [SerializeField] private Block _blockPrefab;
+    [SerializeField] private GameObject _blockPrefab;
     [SerializeField] private GameObject _wallPrefab;
     public Player _player { get; private set; }
     public PlayerAnalyze _playerAnalyze { get; private set; }
@@ -19,7 +19,7 @@ public class ObjectManager : MonoBehaviour
     public BossGroggy _bossGroggy { get; private set; }
     public BossDie _bossDie { get; private set; }
     public EnergySpawner _energySpawner { get; private set; }
-    public Block _block { get; private set; }
+    public GameObject _block { get; private set; }
     public GameObject _wall { get; private set; }
 
     public void Init(GameManager gameManager)
@@ -46,7 +46,6 @@ public class ObjectManager : MonoBehaviour
         _bossGroggy = _boss.GetComponent<Animator>().GetBehaviour<BossGroggy>();
         _bossDie = _boss.transform.GetChild(5).GetComponent<BossDie>();
         _energySpawner = Instantiate(_energySpawnerPrefab);
-        _block = Instantiate(_blockPrefab);
         _wall = Instantiate(_wallPrefab);
     }
 
@@ -104,8 +103,10 @@ public class ObjectManager : MonoBehaviour
     {
         _energySpawner.gameObject.SetActive(false);
         _energySpawner.ClearEnergy();
-        _block.gameObject.SetActive(false);
+        ClearBlock();
     }
     public void ClearBoss() => _boss.gameObject.SetActive(false);
     public void ClearPlayer() => _player.gameObject.SetActive(false);
+    public void CreateBlock() => _block = Instantiate(_blockPrefab);
+    public void ClearBlock() => _block.SetActive(false);
 }

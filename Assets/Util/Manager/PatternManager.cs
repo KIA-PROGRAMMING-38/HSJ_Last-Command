@@ -13,9 +13,12 @@ public class PatternManager : MonoBehaviour
     private IEnumerator[] _pattern;
     [SerializeField] private Transform[][] _patternSpawnPoint;
     [SerializeField] private GameObject[] _misslePrefabs;
-    [SerializeField] private float _spawnTime;
+    [SerializeField] private float[] _spawnTimes;
+    private float _spawnTime;
     private int _currentPattern;
+
     public event Action OnBossAttack;
+    public event Action OnBlockPatternStart;
 
     public void Init(GameManager gameManager)
     {
@@ -31,11 +34,12 @@ public class PatternManager : MonoBehaviour
         {
             _pattern[i] = Pattern();
         }
-        for (int i = 2; i < _pattern.Length; ++i)
+        _pattern[2] = CreateBlockPattern();
+        for (int i = 3; i < _pattern.Length; ++i)
         {
             _pattern[i] = BossMovePattern();
         }
-        StartCoroutine(_pattern[_currentPattern]);
+        _spawnTime = _spawnTimes[0];
     }
 
     private void InitiatePattern()
@@ -53,7 +57,7 @@ public class PatternManager : MonoBehaviour
     {
         int randomPosition = UnityEngine.Random.Range(0, _patternSpawnPoint[_currentPattern].Length);
         missle.gameObject.transform.position = _patternSpawnPoint[_currentPattern][randomPosition].position;
-        missle.gameObject.transform.rotation = _patternSpawnPoint[_currentPattern][randomPosition].rotation;
+        missle.SetDirection(Quaternion.Euler(_patternSpawnPoint[_currentPattern][randomPosition].eulerAngles) * Vector2.left);
         missle.gameObject.SetActive(true);
         _currentMissles.Add(missle);
     }
@@ -78,6 +82,16 @@ public class PatternManager : MonoBehaviour
         }
     }
 
+    IEnumerator CreateBlockPattern()
+    {
+        OnBlockPatternStart?.Invoke();
+        WaitForSeconds spawnTimer = new WaitForSeconds(_spawnTime);
+        while (true)
+        {
+            Missle missle = _pool.Get();
+            yield return spawnTimer;
+        }
+    }
     IEnumerator BossMovePattern()
     {
         float elapsedTime = 0;
@@ -106,6 +120,7 @@ public class PatternManager : MonoBehaviour
         StopCoroutine(_pattern[_currentPattern]);
         DestroyMissiles();
         ++_currentPattern;
+        _spawnTime = _spawnTimes[_currentPattern];
         InitiatePattern();
         StartCoroutine(_pattern[_currentPattern]);
     }
@@ -134,5 +149,9 @@ public class PatternManager : MonoBehaviour
             Destroy(missle.gameObject);
         }
         _currentMissles.Clear();
+    }
+    public void StartGame()
+    {
+        StartCoroutine(_pattern[_currentPattern]);
     }
 }
