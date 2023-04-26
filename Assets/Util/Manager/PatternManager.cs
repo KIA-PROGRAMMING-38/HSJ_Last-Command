@@ -15,6 +15,7 @@ public class PatternManager : MonoBehaviour
     [SerializeField] private GameObject[] _misslePrefabs;
     [SerializeField] private float _spawnTime;
     private int _currentPattern;
+    public event Action OnBossAttack;
 
     public void Init(GameManager gameManager)
     {
@@ -26,7 +27,14 @@ public class PatternManager : MonoBehaviour
         _pattern = new IEnumerator[6];
         SetTransform();
         InitiatePattern();
-        _pattern[_currentPattern] = Pattern();
+        for(int i = 0; i < 2; ++i)
+        {
+            _pattern[i] = Pattern();
+        }
+        for (int i = 2; i < _pattern.Length; ++i)
+        {
+            _pattern[i] = BossMovePattern();
+        }
         StartCoroutine(_pattern[_currentPattern]);
     }
 
@@ -70,12 +78,34 @@ public class PatternManager : MonoBehaviour
         }
     }
 
+    IEnumerator BossMovePattern()
+    {
+        float elapsedTime = 0;
+        float bossElapsedTime = 0;
+        float bossMoveTime = 5;
+        while (true)
+        {
+            elapsedTime += Time.deltaTime;
+            bossElapsedTime += Time.deltaTime;
+            if (elapsedTime >= _spawnTime)
+            {
+                Missle missle = _pool.Get();
+                elapsedTime = 0;
+            }
+            if(bossElapsedTime > bossMoveTime)
+            {
+                OnBossAttack?.Invoke();
+                bossElapsedTime = 0;
+            }
+            yield return null;
+        }
+    }
+
     public void ChangePattern()
     {
         StopCoroutine(_pattern[_currentPattern]);
         DestroyMissiles();
         ++_currentPattern;
-        _pattern[_currentPattern] = Pattern();
         InitiatePattern();
         StartCoroutine(_pattern[_currentPattern]);
     }

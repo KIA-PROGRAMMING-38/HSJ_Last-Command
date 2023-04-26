@@ -38,10 +38,13 @@ public class Boss : MonoBehaviour
     private IObjectPool<Effect> _pool;
     private IObjectPool<HitEffect> _hitPool;
     private int _hitEffectNum = 15;
+
+    public Test _bossAttack { get; private set; }
     void Awake()
     {
         ResetSettings();
         InitPool();
+        _bossAttack = GetComponentInChildren<Test>();
         _groggyEffect = transform.Find("BossGroggy").gameObject;
         _isOnGroggy = false;
     }

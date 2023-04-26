@@ -11,7 +11,6 @@ public class Bullet : MonoBehaviour
     private Player _player;
     private Boss _boss;
 
-    private Vector2 _bossPosition;
     private Vector2 _waypointPosition;
     private float _waypointRadius;
 
@@ -35,7 +34,6 @@ public class Bullet : MonoBehaviour
     private void OnEnable()
     {
         transform.position = (Vector2)_player.transform.position;
-        _bossPosition = (Vector2)_boss.transform.position;
         _waypointPosition = (Vector2)_player.transform.position + (Random.insideUnitCircle.normalized * _waypointRadius);
 
         ResetSettings(_waypointPosition, _lerpSpeed1);
@@ -55,12 +53,12 @@ public class Bullet : MonoBehaviour
         }
 
         yield return new WaitForSeconds(_coroutineWaitTime);
-        ResetSettings(_bossPosition, _lerpSpeed2);
 
-        while (Vector2.Distance(transform.position, _bossPosition) >= 0.2f)
+        while (Vector2.Distance(transform.position, (Vector2)_boss.transform.position) >= 0.2f)
         {
+            ResetSettings(_boss.transform.position, _lerpSpeed2);
             float ratio = Mathf.Clamp01(Time.deltaTime / _moveTime);
-            transform.position = Vector3.Lerp(transform.position, _bossPosition, ratio);
+            transform.position = Vector3.Lerp(transform.position, _boss.transform.position, ratio);
             yield return null;
         }
         ReturnBullet();

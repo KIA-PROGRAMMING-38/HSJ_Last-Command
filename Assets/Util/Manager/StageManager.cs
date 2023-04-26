@@ -38,13 +38,11 @@ public class StageManager : MonoBehaviour
         SetRank();
         OnGameClearUI?.Invoke(_playTime, _rank, _hitTime);
         OnGameClear?.Invoke();
-        Debug.Log("게임 클리어!");
     }
 
     public void GameOver()
     {
         OnGameOver?.Invoke();
-        Debug.Log("게임 오버!");
     }
     public void Init(GameManager gameManager)
     {

@@ -93,6 +93,9 @@ public class GameManager : MonoBehaviour
         _stageManager.OnGameClearUI += _uiManager._gameClearUI.SetUI;
         _stageManager.OnGameOver -= _uiManager.ShowGameOverUI;
         _stageManager.OnGameOver += _uiManager.ShowGameOverUI;
+
+        _patternManager.OnBossAttack -= _objectManager._boss._bossAttack.PrepareAttack;
+        _patternManager.OnBossAttack += _objectManager._boss._bossAttack.PrepareAttack;
     }
 
     private void UnbindEvents()
@@ -123,6 +126,8 @@ public class GameManager : MonoBehaviour
         _stageManager.OnGameClear -= _uiManager._gameClearUI.CalculateScore;
         _stageManager.OnGameClearUI -= _uiManager._gameClearUI.SetUI;
         _stageManager.OnGameOver -= _uiManager.ShowGameOverUI;
+
+        _patternManager.OnBossAttack -= _objectManager._boss._bossAttack.PrepareAttack;
     }
 
 }
