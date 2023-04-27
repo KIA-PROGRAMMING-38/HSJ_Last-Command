@@ -8,8 +8,8 @@ public class PatternManager : MonoBehaviour
 {
     public GameManager _gameManager { get; private set; }
 
-    private ObjectPool<Missle> _pool;
-    private List<Missle> _currentMissles = new List<Missle>();
+    private ObjectPool<Missile> _pool;
+    private List<Missile> _currentMissles = new List<Missile>();
     private IEnumerator[] _pattern;
     [SerializeField] private Transform[][] _patternSpawnPoint;
     [SerializeField] private GameObject[] _misslePrefabs;
@@ -17,9 +17,13 @@ public class PatternManager : MonoBehaviour
     private float _spawnTime;
     private int _currentPattern;
 
+    public event Action OnBossMove;
     public event Action OnBossAttack;
     public event Action OnBlockPatternStart;
+    public event Action OnWheelPatternStart;
 
+    private Transform _bossTransform;
+    private Transform _playerTransform;
     public void Init(GameManager gameManager)
     {
         _gameManager = gameManager;
@@ -30,30 +34,26 @@ public class PatternManager : MonoBehaviour
         _pattern = new IEnumerator[6];
         SetTransform();
         InitiatePattern();
-        for(int i = 0; i < 2; ++i)
-        {
-            _pattern[i] = Pattern();
-        }
+        _pattern[0] = BossAttackPattern();
+        _pattern[1] = DefaultPattern();
         _pattern[2] = CreateBlockPattern();
-        for (int i = 3; i < _pattern.Length; ++i)
-        {
-            _pattern[i] = BossMovePattern();
-        }
+        _pattern[3] = CreateWheelPattern();
+        _pattern[4] = BossMovePattern();
         _spawnTime = _spawnTimes[0];
     }
 
     private void InitiatePattern()
     {
-        _pool = new ObjectPool<Missle>(StartPattern, OnGetMissle, OnReleaseMissle, OnDestroyMissle, maxSize: 20);
+        _pool = new ObjectPool<Missile>(StartPattern, OnGetMissle, OnReleaseMissle, OnDestroyMissle, maxSize: 20);
     }
-    private Missle StartPattern()
+    private Missile StartPattern()
     {
         int randomPosition = UnityEngine.Random.Range(0, _patternSpawnPoint[_currentPattern].Length);
-        Missle missle = Instantiate(_misslePrefabs[_currentPattern], _patternSpawnPoint[_currentPattern][randomPosition].position, _patternSpawnPoint[_currentPattern][randomPosition].rotation).GetComponent<Missle>();
+        Missile missle = Instantiate(_misslePrefabs[_currentPattern], _patternSpawnPoint[_currentPattern][randomPosition].position, _patternSpawnPoint[_currentPattern][randomPosition].rotation).GetComponent<Missile>();
         missle.SetPool(_pool);
         return missle;
     }
-    private void OnGetMissle(Missle missle)
+    private void OnGetMissle(Missile missle)
     {
         int randomPosition = UnityEngine.Random.Range(0, _patternSpawnPoint[_currentPattern].Length);
         missle.gameObject.transform.position = _patternSpawnPoint[_currentPattern][randomPosition].position;
@@ -62,22 +62,23 @@ public class PatternManager : MonoBehaviour
         _currentMissles.Add(missle);
     }
 
-    private void OnReleaseMissle(Missle missle)
+    private void OnReleaseMissle(Missile missle)
     {
         missle.gameObject.SetActive(false);
         _currentMissles.Remove(missle);
     }
-    private void OnDestroyMissle(Missle missle)
+    private void OnDestroyMissle(Missile missle)
     {
         Destroy(missle.gameObject);
     }
 
-    IEnumerator Pattern()
+    IEnumerator DefaultPattern()
     {
         WaitForSeconds spawnTimer = new WaitForSeconds(_spawnTime);
+        yield return new WaitForSeconds(2);
         while (true)
         {
-            Missle missle = _pool.Get();
+            Missile missle = _pool.Get();
             yield return spawnTimer;
         }
     }
@@ -86,9 +87,10 @@ public class PatternManager : MonoBehaviour
     {
         OnBlockPatternStart?.Invoke();
         WaitForSeconds spawnTimer = new WaitForSeconds(_spawnTime);
+        yield return new WaitForSeconds(2);
         while (true)
         {
-            Missle missle = _pool.Get();
+            Missile missle = _pool.Get();
             yield return spawnTimer;
         }
     }
@@ -96,20 +98,69 @@ public class PatternManager : MonoBehaviour
     {
         float elapsedTime = 0;
         float bossElapsedTime = 0;
-        float bossMoveTime = 5;
+        float bossMoveTime = _spawnTime * 2;
+        _patternSpawnPoint[_currentPattern] = new Transform[1];
+        _patternSpawnPoint[_currentPattern][0] = _bossTransform;
+        yield return new WaitForSeconds(2);
         while (true)
         {
             elapsedTime += Time.deltaTime;
             bossElapsedTime += Time.deltaTime;
+            WaitForSeconds wait = new WaitForSeconds(0.5f);
             if (elapsedTime >= _spawnTime)
             {
-                Missle missle = _pool.Get();
+                for (int i = 0; i < 3; ++i)
+                {
+                    HomingMissile missle = _pool.Get() as HomingMissile;
+                    missle.SetTarget(_playerTransform);
+                    yield return wait;
+                }
                 elapsedTime = 0;
+                OnBossAttack?.Invoke();
+                _patternSpawnPoint[_currentPattern][0] = _bossTransform;
             }
             if(bossElapsedTime > bossMoveTime)
             {
-                OnBossAttack?.Invoke();
+                OnBossMove?.Invoke();
                 bossElapsedTime = 0;
+            }
+            yield return null;
+        }
+    }
+    IEnumerator CreateWheelPattern()
+    {
+        OnWheelPatternStart?.Invoke();
+        WaitForSeconds spawnTimer = new WaitForSeconds(_spawnTime);
+        yield return new WaitForSeconds(2);
+        while (true)
+        {
+            Missile missle = _pool.Get();
+            yield return spawnTimer;
+        }
+    }
+    IEnumerator BossAttackPattern()
+    {
+        float elapsedTime = 0;
+        float bossElapsedTime = 0;
+        _patternSpawnPoint[_currentPattern] = new Transform[1];
+        _patternSpawnPoint[_currentPattern][0] = _bossTransform;
+        yield return new WaitForSeconds(2);
+        while (true)
+        {
+            elapsedTime += Time.deltaTime;
+            bossElapsedTime += Time.deltaTime;
+            WaitForSeconds wait = new WaitForSeconds(0.5f);
+            if (elapsedTime >= _spawnTime)
+            {
+                for (int i = 0; i < 3; ++i)
+                {
+                    HomingMissile missle = _pool.Get() as HomingMissile;
+                    missle.SetTarget(_playerTransform);
+                    yield return wait;
+                }
+                elapsedTime = 0;
+                OnBossAttack?.Invoke();
+                _patternSpawnPoint[_currentPattern][0] = _bossTransform;
             }
             yield return null;
         }
@@ -144,7 +195,7 @@ public class PatternManager : MonoBehaviour
     {
         StopCoroutine(_pattern[_currentPattern]);
         _pool.Clear();
-        foreach (Missle missle in _currentMissles)
+        foreach (Missile missle in _currentMissles)
         {
             Destroy(missle.gameObject);
         }
@@ -153,5 +204,10 @@ public class PatternManager : MonoBehaviour
     public void StartGame()
     {
         StartCoroutine(_pattern[_currentPattern]);
+    }
+    public void SetTransform(Transform bossTransform, Transform playerTransform)
+    {
+        _bossTransform = bossTransform;
+        _playerTransform = playerTransform;
     }
 }

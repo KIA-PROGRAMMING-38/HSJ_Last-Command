@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BlockCreate : MonoBehaviour
+public abstract class Warning : MonoBehaviour
 {
     private SpriteRenderer _warning;
     private void Awake()
@@ -36,8 +36,8 @@ public class BlockCreate : MonoBehaviour
                 yield return null;
             }
         }
-        gameObject.SetActive(false);
-        transform.parent.gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        transform.parent.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+        AfterWarning();
     }
+
+    protected abstract void AfterWarning();
 }

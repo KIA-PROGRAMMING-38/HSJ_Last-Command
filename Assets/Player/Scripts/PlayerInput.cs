@@ -74,7 +74,6 @@ public class PlayerInput : MonoBehaviour
 
         if (_elapsedTime >= _dashWaitTime && !_isDashNoticed)
         {
-            Debug.Log("대시 준비완료!");
             SoundManager.instance.Play(SoundID.PlayerDashRestore);
             OnDashReady?.Invoke();
             _isDashNoticed = true;

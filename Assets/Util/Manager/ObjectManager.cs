@@ -12,6 +12,7 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private EnergySpawner _energySpawnerPrefab;
     [SerializeField] private GameObject _blockPrefab;
     [SerializeField] private GameObject _wallPrefab;
+    [SerializeField] private GameObject _wheelPrefab;
     public Player _player { get; private set; }
     public PlayerAnalyze _playerAnalyze { get; private set; }
     public PlayerIdleMove _playerIdle { get; private set; }
@@ -21,7 +22,7 @@ public class ObjectManager : MonoBehaviour
     public EnergySpawner _energySpawner { get; private set; }
     public GameObject _block { get; private set; }
     public GameObject _wall { get; private set; }
-
+    public GameObject _wheel { get; private set; }
     public void Init(GameManager gameManager)
     {
         _gameManager = gameManager;
@@ -55,8 +56,10 @@ public class ObjectManager : MonoBehaviour
         _boss.OnDamageChange += _player.Invincible;
         _bossGroggy.OnGroggyEnd -= _boss.EndGroggy;
         _bossGroggy.OnGroggyEnd += _boss.EndGroggy;
-        _bossGroggy.OnGroggyEnd -= _player.Invincible;
-        _bossGroggy.OnGroggyEnd += _player.Invincible;
+        _bossGroggy.OnAttackSuccess -= _player.Invincible;
+        _bossGroggy.OnAttackSuccess += _player.Invincible;
+        _bossGroggy.OnAttackSuccess -= _player.HealHP;
+        _bossGroggy.OnAttackSuccess += _player.HealHP;
         _boss.OnDie -= ClearObject;
         _boss.OnDie += ClearObject;
         _boss.OnDie -= ClearPlayer;
@@ -85,7 +88,8 @@ public class ObjectManager : MonoBehaviour
     {
         _boss.OnDamageChange -= _player.Invincible;
         _bossGroggy.OnGroggyEnd -= _boss.EndGroggy;
-        _bossGroggy.OnGroggyEnd -= _player.Invincible;
+        _bossGroggy.OnAttackSuccess -= _player.Invincible;
+        _bossGroggy.OnAttackSuccess -= _player.HealHP;
         _boss.OnDie -= ClearObject;
         _boss.OnDie -= ClearPlayer;
         _player.OnDie -= ClearObject;
@@ -103,10 +107,19 @@ public class ObjectManager : MonoBehaviour
     {
         _energySpawner.gameObject.SetActive(false);
         _energySpawner.ClearEnergy();
-        ClearBlock();
+        if(_block != null)
+        {
+            ClearBlock();
+        }
+        if(_wheel != null)
+        {
+            ClearWheel();
+        }
     }
     public void ClearBoss() => _boss.gameObject.SetActive(false);
     public void ClearPlayer() => _player.gameObject.SetActive(false);
     public void CreateBlock() => _block = Instantiate(_blockPrefab);
     public void ClearBlock() => _block.SetActive(false);
+    public void CreateWheel() => _wheel = Instantiate(_wheelPrefab);
+    public void ClearWheel() => _wheel.SetActive(false);
 }

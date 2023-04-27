@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public abstract class Missle : MonoBehaviour
+public abstract class Missile : MonoBehaviour
 {
-    protected IObjectPool<Missle> _currentPool;
+    protected IObjectPool<Missile> _currentPool;
     protected Vector3 _direction;
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -21,7 +21,7 @@ public abstract class Missle : MonoBehaviour
             ReturnMissle();
         }
     }
-    public void SetPool(IObjectPool<Missle> pool)
+    public void SetPool(IObjectPool<Missile> pool)
     {
         _currentPool = pool;
     }

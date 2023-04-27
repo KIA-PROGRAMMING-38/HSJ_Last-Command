@@ -4,16 +4,16 @@ using UnityEngine;
 using UnityEngine.Pool;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class HitEffect : Effect
+public class SpreadEffect : Effect
 {
-    private IObjectPool<HitEffect> _currentPool;
+    private IObjectPool<SpreadEffect> _currentPool;
     private Transform _startTransform;
 
     private Vector2 _targetPosition;
     private IEnumerator _effectMove;
-    private float _radius = 3;
+    [SerializeField] private float _radius;
 
-    private float _lerpSpeed = 10;
+    [SerializeField] private float _lerpSpeed;
     private float _moveTime;
     private float _distance;
 
@@ -30,7 +30,7 @@ public class HitEffect : Effect
         StartCoroutine(_effectMove);
     }
 
-    public void SetPool(IObjectPool<HitEffect> pool, Transform transform)
+    public void SetPool(IObjectPool<SpreadEffect> pool, Transform transform)
     {
         _currentPool = pool;
         _startTransform = transform;

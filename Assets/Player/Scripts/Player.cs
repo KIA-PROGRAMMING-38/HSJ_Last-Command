@@ -11,6 +11,7 @@ using UnityEngine.Pool;
 using static UnityEngine.ParticleSystem;
 using UnityEngine.UIElements;
 using Util.Enum;
+using Unity.VisualScripting;
 
 public class Player : MonoBehaviour
 {
@@ -40,7 +41,12 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float _invincibleTime;
     [SerializeField] private int _Hp;
+    private int _MaxHP;
+    private IObjectPool<SpreadEffect> _healPool;
+    [SerializeField] private GameObject _healEffect;
+
     public event Action OnHpDecrease;
+    public event Action OnHpIncrease;
     public event Action OnDie;
     public event Action OnDieEnd;
 
@@ -76,6 +82,7 @@ public class Player : MonoBehaviour
     public event Action OnGameStart;
     private void Awake()
     {
+        _MaxHP = _Hp;
         _defaultLength = 3;
         _currentLength = _defaultLength;
         _energies = new GameObject[_maxLength];
@@ -161,7 +168,6 @@ public class Player : MonoBehaviour
                 _earnEnergyBox.SetActive(true);
             }
             _energy.Push(true);
-            Debug.Log(_currentLength);
         }
 
         if (_currentLength == _maxLength)
@@ -252,11 +258,16 @@ public class Player : MonoBehaviour
         ApplyDamage();
     }
 
-    public int HP()
+    public int HP() => _Hp;
+    public void HealHP()
     {
-        return _Hp;
+        if(_Hp < _MaxHP)
+        {
+            ++_Hp;
+            OnHpIncrease?.Invoke();
+            StartCoroutine(HealEffect());
+        }
     }
-
     IEnumerator PlayerDieEffect()
     {
         WaitForSeconds wait = new WaitForSeconds(0.3f);
@@ -286,6 +297,7 @@ public class Player : MonoBehaviour
         if(_pool == null)
         {
             _pool = new ObjectPool<LostEnergy>(SpawnEnergy,OnGetEnergy,OnReleaseEnergy,OnDestroyEnergy, maxSize: _maxLength);
+            _healPool = new ObjectPool<SpreadEffect>(CreateHeal, OnGet, OnRelease, OnDestroyParticle, maxSize: 25);
         }
     }
 
@@ -307,6 +319,30 @@ public class Player : MonoBehaviour
     private void OnDestroyEnergy(LostEnergy lostEnergy)
     {
         Destroy(lostEnergy.gameObject);
+    }
+
+
+    private SpreadEffect CreateHeal()
+    {
+        SpreadEffect effect = Instantiate(_healEffect, transform.position, transform.rotation).GetComponent<SpreadEffect>();
+        effect.SetPool(_healPool, transform);
+        return effect;
+    }
+
+    private void OnGet(Effect particle)
+    {
+        particle.gameObject.SetActive(true);
+        particle.transform.position = transform.position;
+        particle.transform.rotation = transform.rotation;
+    }
+    private void OnRelease(Effect particle)
+    {
+        particle.gameObject.SetActive(false);
+    }
+
+    private void OnDestroyParticle(Effect particle)
+    {
+        Destroy(particle.gameObject);
     }
     private void Die()
     {
@@ -351,6 +387,14 @@ public class Player : MonoBehaviour
         }
         _trail.enabled = false;
     }
+    IEnumerator HealEffect()
+    {
+        yield return new WaitForSeconds(0.5f);
+        for (int i = 0; i < 8; ++i)
+        {
+            SpreadEffect healEffect = _healPool.Get();
+        }
+    }
 
     private void ChangeColor(Color color)
     {
@@ -376,5 +420,4 @@ public class Player : MonoBehaviour
         Invincible();
         OnGameStart?.Invoke();
     }
-
 }

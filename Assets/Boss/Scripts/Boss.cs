@@ -24,7 +24,6 @@ public class Boss : MonoBehaviour
     [SerializeField] private int _Hp;
 
     public event Action OnAttackSuccess;
-
     public event Action<int, int, float> OnTempChange;
     public event Action<int, float> OnConfChange;
     public event Action OnDamageChange;
@@ -36,15 +35,15 @@ public class Boss : MonoBehaviour
     [SerializeField] private GameObject _damageEffect;
     [SerializeField] private GameObject _hitEffect;
     private IObjectPool<Effect> _pool;
-    private IObjectPool<HitEffect> _hitPool;
+    private IObjectPool<SpreadEffect> _hitPool;
     private int _hitEffectNum = 15;
 
-    public Test _bossAttack { get; private set; }
+    public BossPattern _bossPattern { get; private set; }
     void Awake()
     {
         ResetSettings();
         InitPool();
-        _bossAttack = GetComponentInChildren<Test>();
+        _bossPattern = GetComponentInChildren<BossPattern>();
         _groggyEffect = transform.Find("BossGroggy").gameObject;
         _isOnGroggy = false;
     }
@@ -99,7 +98,7 @@ public class Boss : MonoBehaviour
         OnAttackSuccess?.Invoke();
         for(int i = 0; i < _hitEffectNum; ++ i)
         {
-            HitEffect hitEffect = _hitPool.Get();
+            SpreadEffect hitEffect = _hitPool.Get();
         }
     }
 
@@ -164,7 +163,7 @@ public class Boss : MonoBehaviour
         if (_pool == null || _hitPool == null)
         {
             _pool = new ObjectPool<Effect>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 8);
-            _hitPool = new ObjectPool<HitEffect>(CreateHit, OnGet, OnRelease, OnDestroyParticle, maxSize: 25);
+            _hitPool = new ObjectPool<SpreadEffect>(CreateHit, OnGet, OnRelease, OnDestroyParticle, maxSize: 25);
         }
     }
 
@@ -174,9 +173,9 @@ public class Boss : MonoBehaviour
         particle.SetPool(_pool);
         return particle;
     }
-    private HitEffect CreateHit()
+    private SpreadEffect CreateHit()
     {
-        HitEffect effect = Instantiate(_hitEffect, transform.position, transform.rotation).GetComponent<HitEffect>();
+        SpreadEffect effect = Instantiate(_hitEffect, transform.position, transform.rotation).GetComponent<SpreadEffect>();
         effect.SetPool(_hitPool, transform);
         return effect;
     }

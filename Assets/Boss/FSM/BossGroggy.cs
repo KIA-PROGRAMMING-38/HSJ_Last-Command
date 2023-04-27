@@ -16,6 +16,7 @@ public class BossGroggy : StateMachineBehaviour
 
     public event Action OnGroggyEnd;
     public event Action<float> OnGroggyTime;
+    public event Action OnAttackSuccess;
 
     private IObjectPool<Effect> _pool;
     [SerializeField] private GameObject _particle;
@@ -42,6 +43,7 @@ public class BossGroggy : StateMachineBehaviour
             SoundManager.instance.Play(SoundID.BossHit);
             animator.SetBool("isGroggy", false);
             OnGroggyEnd?.Invoke();
+            OnAttackSuccess?.Invoke();
             animator.GetComponent<Boss>().Damaged();
             Effect particle = _pool.Get();
         }

@@ -42,7 +42,6 @@ public class PlayerAnalyze : PlayerState
                 _followingHead.SetActive(false);
             }
         }
-        Debug.Log(_activeEnergyCount - 2);
         if (_movement != null)
         {
             _movement.ChangeState(this);
@@ -55,7 +54,6 @@ public class PlayerAnalyze : PlayerState
         if (_attackStartTime > _attackWaitTime)
         {
             Attack();
-            Debug.Log(_activeEnergyCount - 2);
             _attackStartTime = 0;
         }
         else
@@ -69,7 +67,6 @@ public class PlayerAnalyze : PlayerState
     }
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log(_activeEnergyCount - 2);
         for (int i = 0; i < _activeEnergyCount; ++i)
         {
             _playerTransform.GetChild(i).gameObject.SetActive(true);

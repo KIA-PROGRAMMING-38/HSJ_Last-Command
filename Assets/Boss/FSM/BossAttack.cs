@@ -5,14 +5,23 @@ using UnityEngine;
 
 public class BossAttack : StateMachineBehaviour
 {
-    private Vector2 _targetPosition;
+    [SerializeField] private Vector2[] _targetPositions;
+    private Vector2 _targetPosition = new Vector2(6, 3);
+    private Vector2 _previousTargetPosition = new Vector2(0, 0);
     private Vector2 _currentPosition;
     private float _moveSpeed = 8f;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _targetPosition = new Vector2(-animator.transform.parent.position.x, animator.transform.parent.position.y);
-        
+        if(animator.transform.position.x > 0)
+        {
+            _targetPosition = _targetPositions[Random.Range(0, 2)];
+        }
+        else
+        {
+            _targetPosition = _targetPositions[Random.Range(3, 5)];
+        }
+        _previousTargetPosition = _targetPosition;
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

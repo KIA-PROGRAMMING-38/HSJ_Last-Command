@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SubMissle3 : Missle
+public class MissileFragment : Missile
 {
     private float _speed = 5f;
 

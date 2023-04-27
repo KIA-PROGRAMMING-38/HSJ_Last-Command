@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class Missle3 : Missle
+public class ShotMissile : Missile
 {
-    IObjectPool<Missle> _subPool;
-    private List<SubMissle3> _currentSubMissle = new List<SubMissle3>();
+    IObjectPool<Missile> _subPool;
+    private List<MissileFragment> _currentSubMissle = new List<MissileFragment>();
     private float _elapsedTime;
     private float _explosionTime = 2;
     public int _angle { get; private set; }
@@ -24,7 +24,7 @@ public class Missle3 : Missle
         {
             for(int i = 0; i < 8; ++ i)
             {
-                SubMissle3 subMissile = _subPool.Get() as SubMissle3;
+                MissileFragment subMissile = _subPool.Get() as MissileFragment;
                 subMissile.transform.position = transform.position;
                 subMissile.SetDirection(Quaternion.Euler(0, 0, i * 45f) * Vector3.left);
                 _currentSubMissle.Add(subMissile);
@@ -47,29 +47,29 @@ public class Missle3 : Missle
     {
         if (_subPool == null)
         {
-            _subPool = new ObjectPool<Missle>(StartSubPattern, OnGetMissle, OnReleaseMissle, OnDestroyMissle, maxSize: 100);
+            _subPool = new ObjectPool<Missile>(StartSubPattern, OnGetMissle, OnReleaseMissle, OnDestroyMissle, maxSize: 100);
         }
     }
-    private Missle StartSubPattern()
+    private Missile StartSubPattern()
     {
-        Missle missle = Instantiate(_subMissle).GetComponent<Missle>();
+        Missile missle = Instantiate(_subMissle).GetComponent<Missile>();
         ++_angle;
-        missle.SetPool(_subPool as IObjectPool<Missle>);
+        missle.SetPool(_subPool as IObjectPool<Missile>);
         return missle;
     }
-    private void OnGetMissle(Missle missle)
+    private void OnGetMissle(Missile missle)
     {
         missle.transform.position = transform.position;
         ++_angle;
         missle.gameObject.SetActive(true);
     }
 
-    private void OnReleaseMissle(Missle missle)
+    private void OnReleaseMissle(Missile missle)
     {
         missle.gameObject.SetActive(false);
-        _currentSubMissle.Remove(missle as SubMissle3);
+        _currentSubMissle.Remove(missle as MissileFragment);
     }
-    private void OnDestroyMissle(Missle missle)
+    private void OnDestroyMissle(Missile missle)
     {
         Destroy(missle.gameObject);
     }
@@ -77,7 +77,7 @@ public class Missle3 : Missle
     private void OnDestroy()
     {
         _subPool.Clear();
-        foreach (Missle missle in _currentSubMissle)
+        foreach (Missile missle in _currentSubMissle)
         {
             Destroy(missle.gameObject);
         }

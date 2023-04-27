@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
 
-public class Missle1 : Missle
+public class DefaultMissile : Missile
 {
     private float _speed;
     private void OnEnable()

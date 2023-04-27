@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Missle2 : Missle
+public class ShakingMissle : Missile
 {
     private float tense = 2f;
     private float frequency = 4f;

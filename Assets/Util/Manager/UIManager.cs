@@ -55,6 +55,12 @@ public class UIManager : MonoBehaviour
         ++_playerHPId;
     }
 
+    public void PlayerHpIncrease()
+    {
+        --_playerHPId;
+        _playerHPImages[_playerHPId].SetActive(true);
+    }
+
     public void ChangeTemp(int tempDamage, int confDamage, float treshold)
     {
         _bossHeartImages[1].fillAmount = Mathf.Min(1, (tempDamage + confDamage) / treshold);
@@ -77,7 +83,7 @@ public class UIManager : MonoBehaviour
     }
     public void SetUI(Player player, Boss boss)
     {
-        if(_inGameUI == null)
+        if (_inGameUI == null)
         {
             _playerHPImages = new GameObject[player.HP()];
             _bossHPImages = new GameObject[boss.HP()];
@@ -93,7 +99,7 @@ public class UIManager : MonoBehaviour
             _gameClearUI = _inGameUI.transform.GetChild(2).GetComponent<GameClearUI>();
             _gameOverUI = _inGameUI.transform.GetChild(3).GetComponent<GameOverUI>();
             _playerHurt = _inGameUI.transform.GetChild(4).gameObject;
-            for(int i = 0; i < 2; ++ i)
+            for (int i = 0; i < 2; ++i)
             {
                 _originalPosition[i] = _rectTransform[i].position;
             }
@@ -103,7 +109,7 @@ public class UIManager : MonoBehaviour
 
             _analyzeBox = player.transform.Find("Analyzing Box").GetChild(0).GetChild(2).GetComponent<Image>();
         }
-        for(int i = 0; i < player.HP(); ++i)
+        for (int i = 0; i < player.HP(); ++i)
         {
             _playerHPImages[i] = _playerHPUI.transform.GetChild(i + 1).GetChild(0).gameObject;
         }
@@ -111,12 +117,12 @@ public class UIManager : MonoBehaviour
         {
             _bossHPImages[i] = _bossHPUI.transform.GetChild(i + 1).GetChild(0).gameObject;
         }
-        for(int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; ++i)
         {
             _bossHeartImages[i] = boss.transform.GetChild(i + 1).GetChild(0).GetComponent<Image>();
         }
         _bossHeartText = boss.transform.GetChild(3).GetChild(1).GetComponent<Text>();
-        for(int i = 0; i < 2; ++i)
+        for (int i = 0; i < 2; ++i)
         {
             _playerHurtEffect[i] = _playerHurt.transform.GetChild(i).GetComponent<Image>();
         }
@@ -135,7 +141,7 @@ public class UIManager : MonoBehaviour
     {
         _gameClearUI.gameObject.SetActive(true);
     }
-    
+
     public void ShakeUI()
     {
         StartCoroutine(Shake());
@@ -153,7 +159,7 @@ public class UIManager : MonoBehaviour
         {
             float x = Random.Range(-1f, 1f) * _shakeTense;
             float y = Random.Range(-1f, 1f) * _shakeTense;
-                
+
             for (int i = 0; i < 2; ++i)
             {
                 _rectTransform[i].position = _originalPosition[i] + new Vector3(x, y, 0f);
@@ -202,11 +208,11 @@ public class UIManager : MonoBehaviour
 
     public void ChangeText(int currentLength)
     {
-    for(int i = 0; i < currentLength; ++i)
+        for (int i = 0; i < currentLength; ++i)
         {
             _earnedEnergy[i] = 'I';
         }
-    for(int i = currentLength; i < _maxLength; ++i)
+        for (int i = currentLength; i < _maxLength; ++i)
         {
             _earnedEnergy[i] = '.';
         }

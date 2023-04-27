@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     {
         InitSettings();
         _uiManager.SetUI(_objectManager._player, _objectManager._boss);
+        _patternManager.SetTransform(_objectManager._boss.transform, _objectManager._player.transform);
         BindEvents();
     }
     private void OnDestroy()
@@ -68,6 +69,8 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnHpDecrease += _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
         _objectManager._player.OnHpDecrease += _stageManager.StopTime;
+        _objectManager._player.OnHpIncrease -= _uiManager.PlayerHpIncrease;
+        _objectManager._player.OnHpIncrease += _uiManager.PlayerHpIncrease;
         _objectManager._player.OnEarnEnergy -= _uiManager.ChangeText;
         _objectManager._player.OnEarnEnergy += _uiManager.ChangeText;
         _objectManager._playerAnalyze.OnAnalyzing -= _uiManager.ChangeFill;
@@ -96,10 +99,14 @@ public class GameManager : MonoBehaviour
         _stageManager.OnGameOver -= _uiManager.ShowGameOverUI;
         _stageManager.OnGameOver += _uiManager.ShowGameOverUI;
 
-        _patternManager.OnBossAttack -= _objectManager._boss._bossAttack.PrepareAttack;
-        _patternManager.OnBossAttack += _objectManager._boss._bossAttack.PrepareAttack;
+        _patternManager.OnBossMove -= _objectManager._boss._bossPattern.PrepareAttack;
+        _patternManager.OnBossMove += _objectManager._boss._bossPattern.PrepareAttack;
+        _patternManager.OnBossAttack -= _objectManager._boss._bossPattern.SetPosition;
+        _patternManager.OnBossAttack += _objectManager._boss._bossPattern.SetPosition;
         _patternManager.OnBlockPatternStart -= _objectManager.CreateBlock;
         _patternManager.OnBlockPatternStart += _objectManager.CreateBlock;
+        _patternManager.OnWheelPatternStart -= _objectManager.CreateWheel;
+        _patternManager.OnWheelPatternStart += _objectManager.CreateWheel;
     }
 
     private void UnbindEvents()
@@ -117,6 +124,7 @@ public class GameManager : MonoBehaviour
         _objectManager._player.OnHpDecrease -= _stageManager.AddHitCount;
         _objectManager._player.OnHpDecrease -= _stageManager.StopTime;
         _objectManager._player.OnHpDecrease -= _uiManager.BreathUI;
+        _objectManager._player.OnHpIncrease -= _uiManager.PlayerHpIncrease;
         _objectManager._player.OnEarnEnergy -= _uiManager.ChangeText;
         _objectManager._playerAnalyze.OnAnalyzing -= _uiManager.ChangeFill;
         _objectManager._bossGroggy.OnGroggyEnd -= _uiManager.ResetFill;
@@ -132,8 +140,10 @@ public class GameManager : MonoBehaviour
         _stageManager.OnGameClearUI -= _uiManager._gameClearUI.SetUI;
         _stageManager.OnGameOver -= _uiManager.ShowGameOverUI;
 
-        _patternManager.OnBossAttack -= _objectManager._boss._bossAttack.PrepareAttack;
+        _patternManager.OnBossMove -= _objectManager._boss._bossPattern.PrepareAttack;
+        _patternManager.OnBossAttack -= _objectManager._boss._bossPattern.SetPosition;
         _patternManager.OnBlockPatternStart -= _objectManager.CreateBlock;
+        _patternManager.OnWheelPatternStart -= _objectManager.CreateWheel;
     }
 
 }
