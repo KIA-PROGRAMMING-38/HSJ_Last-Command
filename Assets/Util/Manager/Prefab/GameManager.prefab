@@ -46,5 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objectManagerPrefab: {fileID: 4261172735953884226, guid: 1c815cc0212ab3042af2d3a5a3485ce7, type: 3}
   _uiManagerPrefab: {fileID: 8332686468958307142, guid: 72f308b9645d97b4f9e05e9201883eb9, type: 3}
-  _patternManagerPrefab: {fileID: 2859491172458311763, guid: 8025499d9eec01e4baa5b82c0ffb4f26, type: 3}
-  _stageManagerPrefab: {fileID: 4542266319077554233, guid: c6f7595d2e3a12546b0bbdee3627b646, type: 3}
+  _patternManagerPrefab: {fileID: -7738257933852403848, guid: 8025499d9eec01e4baa5b82c0ffb4f26, type: 3}

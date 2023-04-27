@@ -780,9 +780,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2859491172458311760}
-  - component: {fileID: 2859491172458311763}
+  - component: {fileID: -7738257933852403848}
   m_Layer: 0
-  m_Name: Pattern Manager
+  m_Name: LancelotPattern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -809,7 +809,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2859491172458311763
+--- !u!114 &-7738257933852403848
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -818,20 +818,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 2859491172458311762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4523d0ef44ca8a43803352ca5f64a0d, type: 3}
+  m_Script: {fileID: 11500000, guid: 55d7a21bdcaf250489d55410e9138410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _misslePrefabs:
+  _lancelotMisslePrefabs:
   - {fileID: 7924299295683930891, guid: 5b011aaef4cdd2e4a9de1b596b5c96eb, type: 3}
   - {fileID: 3955235679424579617, guid: 0b5784c3add3a5e42830500b648a571a, type: 3}
   - {fileID: 7581989172971360624, guid: 6d97cfd2621f19847b185033961c9ff8, type: 3}
   - {fileID: 8575251994493121501, guid: 28ce90d9156ce9746867013e66b43149, type: 3}
   - {fileID: 7924299295683930891, guid: 5b011aaef4cdd2e4a9de1b596b5c96eb, type: 3}
-  _spawnTimes:
+  _lancelotSpawnTimes:
   - 2
   - 0.5
   - 1
-  - 4
+  - 2
   - 3
 --- !u!1 &2859491172585776147
 GameObject:

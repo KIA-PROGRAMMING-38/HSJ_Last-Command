@@ -6,7 +6,7 @@ using Util.Manager;
 
 public class ObjectManager : MonoBehaviour
 {
-    public GameManager _gameManager { get; private set; }
+    public StageManager _stageManager { get; private set; }
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Boss _bossPrefab;
     [SerializeField] private EnergySpawner _energySpawnerPrefab;
@@ -23,9 +23,9 @@ public class ObjectManager : MonoBehaviour
     public GameObject _block { get; private set; }
     public GameObject _wall { get; private set; }
     public GameObject _wheel { get; private set; }
-    public void Init(GameManager gameManager)
+    public void Init(StageManager gameManager)
     {
-        _gameManager = gameManager;
+        _stageManager = gameManager;
     }
     private void Awake()
     {

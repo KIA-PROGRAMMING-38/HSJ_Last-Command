@@ -9,7 +9,7 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class UIManager : MonoBehaviour
 {
-    public GameManager _gameManager { get; private set; }
+    public StageManager _stageManager { get; private set; }
     [SerializeField] private GameObject _inGameUIPrefabs;
     private GameObject _inGameUI;
     private GameObject _playerHPUI;
@@ -40,9 +40,9 @@ public class UIManager : MonoBehaviour
 
     private Image _analyzeBox;
 
-    public void Init(GameManager gameManager)
+    public void Init(StageManager gameManager)
     {
-        _gameManager = gameManager;
+        _stageManager = gameManager;
     }
     public void BossHpDecrease()
     {

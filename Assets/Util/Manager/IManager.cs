@@ -6,7 +6,7 @@ namespace Util.Manager
 {
     public interface IManager
     {
-        public void Init(GameManager gameManager);
+        public void Init(StageManager gameManager);
         public void Instantiate();
     }
 }
