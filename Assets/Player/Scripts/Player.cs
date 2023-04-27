@@ -140,10 +140,8 @@ public class Player : MonoBehaviour
         _analyzeBox.SetActive(false);
         _startPoint = Instantiate(_startPointPrefab);
         StartCoroutine(StartTimer());
-        
     }
-
-    private void OnDestroy()
+    private void OnDisable()
     {
         StopAllCoroutines();
     }

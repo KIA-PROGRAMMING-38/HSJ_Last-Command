@@ -10,13 +10,14 @@ public class MainMenu : Menu
     [SerializeField] private Button[] _mainMenuButtons;
     [SerializeField] private GameObject[] _mainMenuObjects;
     [SerializeField] private GameObject _settings;
+    [SerializeField] private Image _panel;
     private SettingMenu _settingMenu;
 
     protected override Button[] _menuButtons { get { return _mainMenuButtons; } }
 
     public void StartGame()
     {
-        SceneManager.LoadScene(0);
+        StartCoroutine(FadeOut());
     }
 
     public void GoToSettings()
@@ -47,5 +48,17 @@ public class MainMenu : Menu
         {
             gameObject.SetActive(true);
         }
+    }
+    private IEnumerator FadeOut()
+    {
+        float elapsedTime = 0;
+        float fadeOutTime = 1;
+        while(elapsedTime < fadeOutTime)
+        {
+            elapsedTime += Time.deltaTime;
+            _panel.color = new Color(0, 0, 0, elapsedTime);
+            yield return null;
+        }
+        SceneManager.LoadScene(0);
     }
 }
