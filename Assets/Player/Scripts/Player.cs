@@ -40,8 +40,8 @@ public class Player : MonoBehaviour
     private bool _isOverclocking;
 
     [SerializeField] private float _invincibleTime;
-    [SerializeField] private int _Hp;
-    private int _MaxHP;
+    [SerializeField] private int _MaxHp;
+    private int _Hp;
     private IObjectPool<SpreadEffect> _healPool;
     [SerializeField] private GameObject _healEffect;
 
@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
     public event Action OnGameStart;
     private void Awake()
     {
-        _MaxHP = _Hp;
+        _Hp = _MaxHp;
         _defaultLength = 3;
         _currentLength = _defaultLength;
         _energies = new GameObject[_maxLength];
@@ -259,7 +259,7 @@ public class Player : MonoBehaviour
     public int HP() => _Hp;
     public void HealHP()
     {
-        if(_Hp < _MaxHP)
+        if(_Hp < _MaxHp)
         {
             ++_Hp;
             OnHpIncrease?.Invoke();

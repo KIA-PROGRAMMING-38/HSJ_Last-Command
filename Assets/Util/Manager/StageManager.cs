@@ -18,24 +18,29 @@ public class StageManager : MonoBehaviour
 
     private void Awake()
     {
-        InitSettings();
-        _uiManager.SetUI(_objectManager._player, _objectManager._boss);
-        _patternManager.SetTransform(_objectManager._boss.transform, _objectManager._player.transform);
-        BindEvents();
+        StartGame();
     }
     private void OnDestroy()
     {
         UnbindEvents();
     }
+    private void StartGame()
+    {
+        _uiManager = Instantiate(_uiManagerPrefab);
+        _uiManager.Init(this);
+        _uiManager._startEffect.OnGameStart -= InitSettings;
+        _uiManager._startEffect.OnGameStart += InitSettings;
+    }
     private void InitSettings()
     {
         _objectManager = Instantiate(_objectManagerPrefab);
         _objectManager.Init(this);
-        _uiManager = Instantiate(_uiManagerPrefab);
-        _uiManager.Init(this);
         _patternManager = Instantiate(_patternManagerPrefab);
         _patternManager.Init(this);
         _rankManager = gameObject.AddComponent<RankManager>();
+        _uiManager.SetUI(_objectManager._player, _objectManager._boss);
+        _patternManager.SetTransform(_objectManager._boss.transform, _objectManager._player.transform);
+        BindEvents();
     }
 
     private void BindEvents()
@@ -142,5 +147,6 @@ public class StageManager : MonoBehaviour
         _patternManager.OnBossAttack -= _objectManager._boss._bossPattern.SetPosition;
         _patternManager.OnBlockPatternStart -= _objectManager.CreateBlock;
         _patternManager.OnWheelPatternStart -= _objectManager.CreateWheel;
+        _uiManager._startEffect.OnGameStart -= InitSettings;
     }
 }

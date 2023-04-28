@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Experimental.AI;
 using UnityEngine.UI;
@@ -9,25 +10,32 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class UIManager : MonoBehaviour
 {
+    [SerializeField] private GameObject _startUIPrefab;
+    private GameObject _startUI;
+    public Test _startEffect { get; private set; }
+    private Image _startFadeIn;
+
     public StageManager _stageManager { get; private set; }
-    [SerializeField] private GameObject _inGameUIPrefabs;
+    [SerializeField] private GameObject _inGameUIPrefab;
     private GameObject _inGameUI;
+
     private GameObject _playerHPUI;
+    private GameObject[] _playerHPImages;
+    private int _playerHPId;
+
     private GameObject _bossHPUI;
+    private GameObject[] _bossHPImages;
+    private int _bossHPId;
+
     private GameOverUI _gameOverUI;
+    public GameClearUI _gameClearUI { get; private set; }
 
     private GameObject _playerHurt;
     private Image[] _playerHurtEffect;
     private float _breathTime = 0.4f;
-    public GameClearUI _gameClearUI { get; private set; }
-
-    private GameObject[] _playerHPImages;
-    private GameObject[] _bossHPImages;
 
     private Image[] _bossHeartImages;
     private Text _bossHeartText;
-    private int _bossHPId;
-    private int _playerHPId;
 
     private float _shakeTense = 8;
     private float _shakeTime = 1;
@@ -40,46 +48,14 @@ public class UIManager : MonoBehaviour
 
     private Image _analyzeBox;
 
+    public void Awake()
+    {
+        _startUI = Instantiate(_startUIPrefab);
+        _startEffect = _startUI.GetComponent<Test>();
+    }
     public void Init(StageManager gameManager)
     {
         _stageManager = gameManager;
-    }
-    public void BossHpDecrease()
-    {
-        _bossHPImages[_bossHPId].SetActive(false);
-        ++_bossHPId;
-    }
-    public void PlayerHpDecrease()
-    {
-        _playerHPImages[_playerHPId].SetActive(false);
-        ++_playerHPId;
-    }
-
-    public void PlayerHpIncrease()
-    {
-        --_playerHPId;
-        _playerHPImages[_playerHPId].SetActive(true);
-    }
-
-    public void ChangeTemp(int tempDamage, int confDamage, float treshold)
-    {
-        _bossHeartImages[1].fillAmount = Mathf.Min(1, (tempDamage + confDamage) / treshold);
-        _bossHeartText.text = $"{(int)(_bossHeartImages[1].fillAmount * 100)}%";
-
-    }
-    public void ChangeConf(int totalDamage, float treshold)
-    {
-        _bossHeartImages[2].fillAmount = Mathf.Min(1, totalDamage / treshold);
-    }
-    public void EnterGroggy()
-    {
-        _bossHeartImages[2].fillAmount = 1;
-    }
-    public void ResetFill()
-    {
-        _bossHeartImages[1].fillAmount = 0;
-        _bossHeartImages[2].fillAmount = 0;
-        _bossHeartText.text = "0%";
     }
     public void SetUI(Player player, Boss boss)
     {
@@ -91,7 +67,7 @@ public class UIManager : MonoBehaviour
             _rectTransform = new RectTransform[2];
             _originalPosition = new Vector3[2];
             _playerHurtEffect = new Image[2];
-            _inGameUI = Instantiate(_inGameUIPrefabs);
+            _inGameUI = Instantiate(_inGameUIPrefab);
             _playerHPUI = _inGameUI.transform.GetChild(0).gameObject;
             _rectTransform[0] = _playerHPUI.GetComponent<RectTransform>();
             _bossHPUI = _inGameUI.transform.GetChild(1).gameObject;
@@ -99,6 +75,7 @@ public class UIManager : MonoBehaviour
             _gameClearUI = _inGameUI.transform.GetChild(2).GetComponent<GameClearUI>();
             _gameOverUI = _inGameUI.transform.GetChild(3).GetComponent<GameOverUI>();
             _playerHurt = _inGameUI.transform.GetChild(4).gameObject;
+            _startFadeIn = _inGameUI.transform.GetChild(5).GetComponent<Image>();
             for (int i = 0; i < 2; ++i)
             {
                 _originalPosition[i] = _rectTransform[i].position;
@@ -126,12 +103,50 @@ public class UIManager : MonoBehaviour
         {
             _playerHurtEffect[i] = _playerHurt.transform.GetChild(i).GetComponent<Image>();
         }
+        StartCoroutine(FadeIn());
     }
     public void RemoveUI()
     {
         _playerHPUI.SetActive(false);
         _bossHPUI.SetActive(false);
     }
+
+    public void PlayerHpDecrease()
+    {
+        _playerHPImages[_playerHPId].SetActive(false);
+        ++_playerHPId;
+    }
+    public void PlayerHpIncrease()
+    {
+        --_playerHPId;
+        _playerHPImages[_playerHPId].SetActive(true);
+    }
+
+    public void BossHpDecrease()
+    {
+        _bossHPImages[_bossHPId].SetActive(false);
+        ++_bossHPId;
+    }
+    public void ChangeTemp(int tempDamage, int confDamage, float treshold)
+    {
+        _bossHeartImages[1].fillAmount = Mathf.Min(1, (tempDamage + confDamage) / treshold);
+        _bossHeartText.text = $"{(int)(_bossHeartImages[1].fillAmount * 100)}%";
+
+    }
+    public void ChangeConf(int totalDamage, float treshold)
+    {
+        _bossHeartImages[2].fillAmount = Mathf.Min(1, totalDamage / treshold);
+    }
+    public void EnterGroggy()
+    {
+        _bossHeartImages[2].fillAmount = 1;
+    }
+    public void ResetFill()
+    {
+        _bossHeartImages[1].fillAmount = 0;
+        _bossHeartImages[2].fillAmount = 0;
+        _bossHeartText.text = "0%";
+    } 
 
     public void ShowGameOverUI()
     {
@@ -222,5 +237,17 @@ public class UIManager : MonoBehaviour
     public void ChangeFill(float offsetTime)
     {
         _analyzeBox.fillAmount = offsetTime;
+    }
+
+    IEnumerator FadeIn()
+    {
+        float elapsedTime = 0;
+        float targetTime = 0.5f;
+        while(elapsedTime <= targetTime)
+        {
+            elapsedTime += Time.deltaTime;
+            _startFadeIn.color = new Color(1, 1, 1, 1 - (elapsedTime / targetTime));
+            yield return null;
+        }
     }
 }
