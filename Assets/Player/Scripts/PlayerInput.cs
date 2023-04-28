@@ -20,22 +20,18 @@ public class PlayerInput : MonoBehaviour
     private bool _isDashNoticed;
     private bool _isDashNotReadyNoticed;
 
-    [SerializeField] private GameObject _dashWaitBoxPrefab;
-    private GameObject _dashWaitBox;
     public event Action OnDirectionChanged;
     public event Action OnDashReady;
     public event Action<float, float> OnWaitDash;
     public event Action OnDashUsed;
-  
-    private void Awake()
+    public event Action OnDashChargeInformed;
+      private void Awake()
     {
         _playerDirection = _right;
         _animator = gameObject.GetComponent<Animator>();
         _isDashNoticed = false;
         _isDashNotReadyNoticed = true;
         _elapsedTime = 0;
-        _dashWaitBox = Instantiate(_dashWaitBoxPrefab, transform);
-        _dashWaitBox.SetActive(false);
     }
 
     private void Update()
@@ -96,7 +92,7 @@ public class PlayerInput : MonoBehaviour
             }
             else if(_isDashNotReadyNoticed)
             {
-                _dashWaitBox.SetActive(true);
+                OnDashChargeInformed?.Invoke();
                 _isDashNotReadyNoticed = false;
             }
         }

@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 3088826191711575735}
   - component: {fileID: 3088826191711575732}
   - component: {fileID: 2324550038123452746}
+  - component: {fileID: 3542274753479220993}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -58,19 +59,8 @@ MonoBehaviour:
   _frameDelay: 4
   _lostEnergy: {fileID: 5397621488999882939, guid: 244923c0047d86646a09cfcd881dc880, type: 3}
   _overclockColor: {r: 1, g: 0.95681447, b: 0.75, a: 0.6862745}
-  _overclockEffectPrefab: {fileID: 8894357174475488106, guid: e6b2c224e77cc6140913ac515b855e3a, type: 3}
   _invincibleTime: 2
   _MaxHp: 5
-  _healEffect: {fileID: 1709602051345798124, guid: 755ee2749d762824db4b8d18b40d021c, type: 3}
-  _dieParticle: {fileID: 7437988786245679799, guid: e94a1e0f1e19cca4a84608770fe810ec, type: 3}
-  _hurtEffect: {fileID: 4326198329854298245, guid: 44c637566f0363e4e8c8c0ad471e7d3a, type: 3}
-  _dashUIPrefab: {fileID: 7271345707847155264, guid: ad7e68f94a2f8ff439dc227ac66cd517, type: 3}
-  _overclockBoxPrefab: {fileID: 8583882183990037899, guid: 912ab525ff2ff104dbcbdf2eacafa5a0, type: 3}
-  _earnEnergyBoxPrefab: {fileID: 6575484213161770266, guid: 6e3255595cc625247b358b55a308266e, type: 3}
-  _invinciblePrefab: {fileID: 8900207143471303603, guid: e12a4a966bbf1984cb49cc47af584695, type: 3}
-  _analyzeBoxPrefab: {fileID: 8199328149899532212, guid: 68f17b0d7cde7ac40bfaf0a80c702d0b, type: 3}
-  _startPointPrefab: {fileID: 4546426950625202763, guid: aa6011d2fb0152d4b8892bf8828758f1, type: 3}
-  _startTextPrefab: {fileID: 2686665627216931969, guid: 3d813e13976e2f64383bee67b21f0fa1, type: 3}
 --- !u!95 &3088826191711575731
 Animator:
   serializedVersion: 5
@@ -157,7 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dashWaitTime: 2
-  _dashWaitBoxPrefab: {fileID: 2966214954239027762, guid: c54a4391026bf07449dfc1c0e37fccea, type: 3}
 --- !u!58 &3088826191711575734
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -325,3 +314,28 @@ TrailRenderer:
   m_MinVertexDistance: 2
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!114 &3542274753479220993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3088826191711575724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f149c281863afa9419e3d88ebab354d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dieParticle: {fileID: 7437988786245679799, guid: e94a1e0f1e19cca4a84608770fe810ec, type: 3}
+  _hurtEffect: {fileID: 4326198329854298245, guid: 44c637566f0363e4e8c8c0ad471e7d3a, type: 3}
+  _overclockEffectPrefab: {fileID: 8894357174475488106, guid: e6b2c224e77cc6140913ac515b855e3a, type: 3}
+  _dashChargeEffectPrefab: {fileID: 7271345707847155264, guid: ad7e68f94a2f8ff439dc227ac66cd517, type: 3}
+  _dashWaitBoxPrefab: {fileID: 2966214954239027762, guid: c54a4391026bf07449dfc1c0e37fccea, type: 3}
+  _overclockBoxPrefab: {fileID: 8583882183990037899, guid: 912ab525ff2ff104dbcbdf2eacafa5a0, type: 3}
+  _earnEnergyBoxPrefab: {fileID: 6575484213161770266, guid: 6e3255595cc625247b358b55a308266e, type: 3}
+  _invinciblePrefab: {fileID: 8900207143471303603, guid: e12a4a966bbf1984cb49cc47af584695, type: 3}
+  _analyzeBoxPrefab: {fileID: 8199328149899532212, guid: 68f17b0d7cde7ac40bfaf0a80c702d0b, type: 3}
+  _startPointPrefab: {fileID: 4546426950625202763, guid: aa6011d2fb0152d4b8892bf8828758f1, type: 3}
+  _startTextPrefab: {fileID: 2686665627216931969, guid: 3d813e13976e2f64383bee67b21f0fa1, type: 3}
+  _healEffect: {fileID: 1709602051345798124, guid: 755ee2749d762824db4b8d18b40d021c, type: 3}
+  _dashStartEffect: {fileID: 215816008283011226, guid: bd70767a905430c45aca38202df65a4a, type: 3}

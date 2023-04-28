@@ -8,6 +8,7 @@ public abstract class PlayerState : StateMachineBehaviour
     protected PlayerMovement _movement;
     protected Player _player;
     protected PlayerInput _input;
+    protected PlayerEffect _effect;
 
     public void InitSettings(Animator player)
     {
@@ -26,6 +27,10 @@ public abstract class PlayerState : StateMachineBehaviour
         if (_movement == null)
         {
             _movement = _player.GetComponent<PlayerMovement>();
+        }
+        if(_effect == null)
+        {
+            _effect = _player.GetComponent<PlayerEffect>();
         }
     }
 

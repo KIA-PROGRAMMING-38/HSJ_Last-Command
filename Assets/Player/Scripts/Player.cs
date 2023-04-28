@@ -16,6 +16,7 @@ using Unity.VisualScripting;
 public class Player : MonoBehaviour
 {
     public ObjectManager _objectManager { get; private set; }
+    private PlayerEffect _playerEffect;
 
     [SerializeField] private GameObject _snakeSprite;
     public int _defaultLength;
@@ -23,7 +24,7 @@ public class Player : MonoBehaviour
     public int maxLength { get { return _maxLength; } }
     public int _currentLength;
     [SerializeField] private int _frameDelay;
-
+    private SpriteRenderer[] _energySprites;
     private GameObject[] _energies;
     private Stack<bool> _energy;
     private Animator _animator;
@@ -31,54 +32,23 @@ public class Player : MonoBehaviour
     IObjectPool<LostEnergy> _pool;
     [SerializeField] private LostEnergy _lostEnergy;
     public event Action<int> OnEarnEnergy;
+    public event Action OnEnergyBoxActivated;
 
     public event Action OnOverclock;
     public event Action OnOverclockEnd;
     [SerializeField] private Color _overclockColor;
-    [SerializeField] private GameObject _overclockEffectPrefab;
-    private GameObject _overclockEffect;
     private bool _isOverclocking;
 
     [SerializeField] private float _invincibleTime;
     [SerializeField] private int _MaxHp;
     private int _Hp;
-    private IObjectPool<SpreadEffect> _healPool;
-    [SerializeField] private GameObject _healEffect;
 
     public event Action OnHpDecrease;
     public event Action OnHpIncrease;
     public event Action OnDie;
     public event Action OnDieEnd;
-
-    [SerializeField] private GameObject _dieParticle;
-    IEnumerator _dieEffectTimer;
-
-    private TrailRenderer _trail;
-    private SpriteRenderer[] _energySprites;
-
-    [SerializeField] private GameObject _hurtEffect;
-    private GameObject[] _hurtParticle;
-
-    [SerializeField] private GameObject _dashUIPrefab;
-    private GameObject _dashUI;
-
-    [SerializeField] private GameObject _overclockBoxPrefab;
-    [SerializeField] private GameObject _earnEnergyBoxPrefab;
-    private GameObject _overclockBox;
-    private GameObject _earnEnergyBox;
-
-    [SerializeField] private GameObject _invinciblePrefab;
-    private GameObject _invincible;
     public event Action OnInvincibleStart;
     public event Action OnInvincibleEnd;
-
-    [SerializeField] private GameObject _analyzeBoxPrefab;
-    private GameObject _analyzeBox;
-
-    [SerializeField] private GameObject _startPointPrefab;
-    private GameObject _startPoint;
-    [SerializeField] private GameObject _startTextPrefab;
-    private GameObject _startText;
     public event Action OnGameStart;
     private void Awake()
     {
@@ -94,9 +64,6 @@ public class Player : MonoBehaviour
         InitiatePool();
         _isOverclocking = false;
         _energy = new Stack<bool>();
-        _dieEffectTimer = PlayerDieEffect();
-        _trail = GetComponent<TrailRenderer>();
-        _hurtParticle = new GameObject[3];
         for (int i = 1; i < _maxLength; ++i)
         {
             GameObject newHead = Instantiate(_snakeSprite, transform);
@@ -107,38 +74,13 @@ public class Player : MonoBehaviour
             headComponent._frameDelay = _frameDelay;
             headComponent._frontHead = _energies[i - 1].transform;
         }
-        _overclockEffect = Instantiate(_overclockEffectPrefab, transform);
         ChangeColor(Color.gray);
-        _overclockEffect.SetActive(false);
-        _dashUI = Instantiate(_dashUIPrefab, transform);
         for (int i = _maxLength; i > _defaultLength; --i)
         {
             transform.GetChild(i - 2).gameObject.SetActive(false);
         }
-        _hurtParticle[0] = Instantiate(_hurtEffect);
-        _hurtParticle[1] = _hurtParticle[0].transform.GetChild(0).gameObject;
-        _hurtParticle[2] = _hurtParticle[0].transform.GetChild(1).gameObject;
-        for(int i = 1; i < 3; ++i)
-        {
-            _hurtParticle[i].SetActive(false);
-        }
-        for (int i = 1; i < _maxLength; ++i)
-        {
-            _invincible = Instantiate(_invinciblePrefab, _energies[i].transform);
-            _invincible.SetActive(false);
-        }
-        _invincible = Instantiate(_invinciblePrefab, transform);
-        _invincible.SetActive(false);
-
-        _overclockBox = Instantiate(_overclockBoxPrefab, transform);
-        _overclockBox.SetActive(false);
-        _earnEnergyBox = Instantiate(_earnEnergyBoxPrefab, transform);
-        _earnEnergyBox.SetActive(false);
-        _earnEnergyBox.name = "Earn Energy Box";
-        _analyzeBox = Instantiate(_analyzeBoxPrefab, transform);
-        _analyzeBox.name = "Analyzing Box";
-        _analyzeBox.SetActive(false);
-        _startPoint = Instantiate(_startPointPrefab);
+        _playerEffect = GetComponent<PlayerEffect>();
+        _playerEffect.Init(this, _energySprites, _energies);
         StartCoroutine(StartTimer());
     }
     private void OnDisable()
@@ -155,7 +97,7 @@ public class Player : MonoBehaviour
         if (_currentLength < _maxLength)
         {
             _currentLength++;
-            if(_animator.GetBool("isAnalyzing") == true)
+            if (_animator.GetBool("isAnalyzing") == true)
             {
                 _analyze.EarnEnergy();
             }
@@ -163,7 +105,7 @@ public class Player : MonoBehaviour
             {
                 transform.GetChild(_currentLength - 2).gameObject.SetActive(true);
                 OnEarnEnergy?.Invoke(_currentLength - 3);
-                _earnEnergyBox.SetActive(true);
+                OnEnergyBoxActivated?.Invoke();
             }
             _energy.Push(true);
         }
@@ -192,7 +134,7 @@ public class Player : MonoBehaviour
     private void SpreadEnergy()
     {
         int random = Random.Range(0, _currentLength - _defaultLength);
-        for(int i = 0; i < random; ++i)
+        for (int i = 0; i < random; ++i)
         {
             LostEnergy lostEnergy = _pool.Get();
         }
@@ -203,9 +145,7 @@ public class Player : MonoBehaviour
         if (!_isOverclocking)
         {
             SoundManager.instance.Play(SoundID.PlayerOverclock);
-            _overclockBox.SetActive(true);
             OnOverclock?.Invoke();
-            _overclockEffect.SetActive(true);
             ChangeColor(_overclockColor);
             _isOverclocking = true;
         }
@@ -215,7 +155,6 @@ public class Player : MonoBehaviour
         if (_isOverclocking)
         {
             OnOverclockEnd?.Invoke();
-            _overclockEffect.SetActive(false);
             ChangeColor(Color.gray);
             _isOverclocking = false;
         }
@@ -229,27 +168,20 @@ public class Player : MonoBehaviour
     IEnumerator OnInvincible()
     {
         gameObject.layer = LayerMask.NameToLayer("Invincible");
-        _invincible.SetActive(true);
         OnInvincibleStart?.Invoke();
         yield return new WaitForSeconds(_invincibleTime);
         gameObject.layer = LayerMask.NameToLayer("Player");
-        _invincible.SetActive(false);
         OnInvincibleEnd?.Invoke();
     }
 
     public void Damaged()
     {
         _Hp--;
-        if(_Hp <= 0)
+        if (_Hp <= 0)
         {
             SoundManager.instance.Play(SoundID.PlayerDead);
             Die();
             return;
-        }
-        for (int i = 1; i < 3; ++i)
-        {
-            _hurtParticle[i].transform.position = transform.position;
-            _hurtParticle[i].SetActive(true);
         }
         SoundManager.instance.Play(SoundID.PlayerDamage);
         SpreadEnergy();
@@ -259,43 +191,17 @@ public class Player : MonoBehaviour
     public int HP() => _Hp;
     public void HealHP()
     {
-        if(_Hp < _MaxHp)
+        if (_Hp < _MaxHp)
         {
             ++_Hp;
             OnHpIncrease?.Invoke();
-            StartCoroutine(HealEffect());
         }
     }
-    IEnumerator PlayerDieEffect()
-    {
-        WaitForSeconds wait = new WaitForSeconds(0.3f);
-
-        for(int i = 1; i <= _energies.Length; ++i)
-        {
-            if(_energies[_energies.Length - i].activeSelf)
-            {
-                Instantiate(_dieParticle, _energies[_energies.Length - i].transform.position, _energies[_energies.Length - i].transform.rotation);
-                _energies[_energies.Length - i].SetActive(false);
-                if (i == _energies.Length)
-                {
-                    OnDieEnd?.Invoke();
-                }
-                yield return wait;
-            }
-            else
-            {
-                yield return null;
-            }
-            
-        }
-    }
-
     private void InitiatePool()
     {
-        if(_pool == null)
+        if (_pool == null)
         {
-            _pool = new ObjectPool<LostEnergy>(SpawnEnergy,OnGetEnergy,OnReleaseEnergy,OnDestroyEnergy, maxSize: _maxLength);
-            _healPool = new ObjectPool<SpreadEffect>(CreateHeal, OnGet, OnRelease, OnDestroyParticle, maxSize: 25);
+            _pool = new ObjectPool<LostEnergy>(SpawnEnergy, OnGetEnergy, OnReleaseEnergy, OnDestroyEnergy, maxSize: _maxLength);
         }
     }
 
@@ -319,29 +225,6 @@ public class Player : MonoBehaviour
         Destroy(lostEnergy.gameObject);
     }
 
-
-    private SpreadEffect CreateHeal()
-    {
-        SpreadEffect effect = Instantiate(_healEffect, transform.position, transform.rotation).GetComponent<SpreadEffect>();
-        effect.SetPool(_healPool, transform);
-        return effect;
-    }
-
-    private void OnGet(Effect particle)
-    {
-        particle.gameObject.SetActive(true);
-        particle.transform.position = transform.position;
-        particle.transform.rotation = transform.rotation;
-    }
-    private void OnRelease(Effect particle)
-    {
-        particle.gameObject.SetActive(false);
-    }
-
-    private void OnDestroyParticle(Effect particle)
-    {
-        Destroy(particle.gameObject);
-    }
     private void Die()
     {
         GetComponent<PlayerMovement>().enabled = false;
@@ -350,7 +233,6 @@ public class Player : MonoBehaviour
         {
             head.Die();
         }
-        StartCoroutine(_dieEffectTimer);
         OnDie?.Invoke();
     }
     private void ApplyDamage()
@@ -366,34 +248,6 @@ public class Player : MonoBehaviour
         Invincible();
     }
 
-    public void EnableDashTrail()
-    {
-        StartCoroutine(DashTrail());
-    }
-
-    IEnumerator DashTrail()
-    {
-        _trail.enabled = true;
-        foreach(SpriteRenderer sprites in _energySprites)
-        {
-            sprites.enabled = false;
-        }
-        yield return new WaitForSeconds(_trail.time);
-        foreach (SpriteRenderer sprites in _energySprites)
-        {
-            sprites.enabled = true;
-        }
-        _trail.enabled = false;
-    }
-    IEnumerator HealEffect()
-    {
-        yield return new WaitForSeconds(0.5f);
-        for (int i = 0; i < 8; ++i)
-        {
-            SpreadEffect healEffect = _healPool.Get();
-        }
-    }
-
     private void ChangeColor(Color color)
     {
         for (int i = _defaultLength; i < _maxLength; ++i)
@@ -401,10 +255,6 @@ public class Player : MonoBehaviour
             _energies[i].GetComponent<SpriteRenderer>().color = color;
         }
     }
-
-    public void SetAnalyzeBoxTrue() => _analyzeBox.SetActive(true);
-    public void SetAnalyzeBoxFalse() => _analyzeBox.SetActive(false);
-
     IEnumerator StartTimer()
     {
         GetComponent<PlayerInput>().enabled = false;
@@ -413,9 +263,12 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(2);
         GetComponent<PlayerInput>().enabled = true;
         GetComponent<PlayerMovement>().enabled = true;
-        _startPoint.SetActive(false);
-        _startText = Instantiate(_startTextPrefab);
         Invincible();
         OnGameStart?.Invoke();
+    }
+
+    public void OnDieEffectEnd()
+    {
+        OnDieEnd?.Invoke();
     }
 }

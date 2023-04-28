@@ -16,6 +16,8 @@ public class ObjectManager : MonoBehaviour
     public Player _player { get; private set; }
     public PlayerAnalyze _playerAnalyze { get; private set; }
     public PlayerIdleMove _playerIdle { get; private set; }
+    public PlayerDash _playerDash { get; private set; }
+    public PlayerEffect _playerEffect { get; private set; }
     public Boss _boss { get; private set; }
     public BossGroggy _bossGroggy { get; private set; }
     public BossDie _bossDie { get; private set; }
@@ -43,6 +45,8 @@ public class ObjectManager : MonoBehaviour
         _player = Instantiate(_playerPrefab);
         _playerAnalyze = _player.GetComponent<Animator>().GetBehaviour<PlayerAnalyze>();
         _playerIdle = _player.GetComponent<Animator>().GetBehaviour<PlayerIdleMove>();
+        _playerDash = _player.GetComponent<Animator>().GetBehaviour<PlayerDash>();
+        _playerEffect = _player.GetComponent<PlayerEffect>();
         _boss = Instantiate(_bossPrefab);
         _bossGroggy = _boss.GetComponent<Animator>().GetBehaviour<BossGroggy>();
         _bossDie = _boss.transform.GetChild(5).GetComponent<BossDie>();
@@ -74,10 +78,12 @@ public class ObjectManager : MonoBehaviour
         _player.OnOverclockEnd += _playerAnalyze.OnOverclockEnd;
         _player.OnHpDecrease -= _playerAnalyze.Damaged;
         _player.OnHpDecrease += _playerAnalyze.Damaged;
-        _playerAnalyze.OnAnalyze -= _player.SetAnalyzeBoxTrue;
-        _playerAnalyze.OnAnalyze += _player.SetAnalyzeBoxTrue;
-        _playerAnalyze.OffAnalyzing -= _player.SetAnalyzeBoxFalse;
-        _playerAnalyze.OffAnalyzing += _player.SetAnalyzeBoxFalse;
+        _playerAnalyze.OnAnalyze -= _playerEffect.SetAnalyzeBoxTrue;
+        _playerAnalyze.OnAnalyze += _playerEffect.SetAnalyzeBoxTrue;
+        _playerAnalyze.OffAnalyzing -= _playerEffect.SetAnalyzeBoxFalse;
+        _playerAnalyze.OffAnalyzing += _playerEffect.SetAnalyzeBoxFalse;
+        _playerDash.OnDashStart -= _playerEffect.EnableCircleEffect;
+        _playerDash.OnDashStart += _playerEffect.EnableCircleEffect;
         _player.OnOverclock -= _playerIdle.OnOverclock;
         _player.OnOverclock += _playerIdle.OnOverclock;
         _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
@@ -100,8 +106,9 @@ public class ObjectManager : MonoBehaviour
         _player.OnOverclock -= _playerIdle.OnOverclock;
         _player.OnOverclockEnd -= _playerIdle.OnOverclockEnd;
 
-        _playerAnalyze.OnAnalyze -= _player.SetAnalyzeBoxTrue;
-        _playerAnalyze.OffAnalyzing -= _player.SetAnalyzeBoxFalse;
+        _playerAnalyze.OnAnalyze -= _playerEffect.SetAnalyzeBoxTrue;
+        _playerAnalyze.OffAnalyzing -= _playerEffect.SetAnalyzeBoxFalse;
+        _playerDash.OnDashStart -= _playerEffect.EnableCircleEffect;
     }
     private void ClearObject()
     {

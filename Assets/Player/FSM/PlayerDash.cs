@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Windows;
 using UnityEngine.Animations;
-using Unity.VisualScripting;
 using System.Runtime.CompilerServices;
 using UnityEngine.Pool;
+using System;
 
 public class PlayerDash : PlayerState
 {
@@ -15,18 +15,15 @@ public class PlayerDash : PlayerState
     Vector2 _expectedDashAmount;
     Vector2 _expectedDashPoint;
     Collider2D _box;
-
-    [SerializeField] private GameObject _circleEffect;
-    private IObjectPool<Effect> _pool;
+    public event Func<Effect> OnDashStart;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         InitSettings(animator);
         _movement.ChangeState(this);
-        _player.EnableDashTrail();
+        _effect.EnableDashTrail();
         _playerTransform = _player.transform;
-        InitPool();
-        Effect circle = _pool.Get();
+        Effect circle = OnDashStart?.Invoke();
     }
 
     public override void Move()
@@ -60,36 +57,5 @@ public class PlayerDash : PlayerState
             followingHead.GetComponent<Head>()?.ClearPath();
         }
         _player.GetComponent<Animator>().SetBool("isDashing", false);
-    }
-
-    private void InitPool()
-    {
-        if(_pool == null)
-        {
-            _pool = new ObjectPool<Effect>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 2);
-        }
-    }
-
-    private Effect Create()
-    {
-        Effect particle = Instantiate(_circleEffect, _playerTransform.position, _playerTransform.rotation).GetComponent<Effect>();
-        particle.SetPool(_pool);
-        return particle;
-    }
-
-    private void OnGet(Effect particle)
-    {
-        particle.gameObject.SetActive(true);
-        particle.transform.position = _playerTransform.position;
-        particle.transform.rotation = _playerTransform.rotation;
-    }
-    private void OnRelease(Effect particle)
-    {
-        particle.gameObject.SetActive(false);
-    }
-
-    private void OnDestroyParticle(Effect particle)
-    {
-        Destroy(particle.gameObject);
     }
 }
