@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
     private GameObject _playerHPUI;
     private GameObject[] _playerHPImages;
     private int _playerHPId;
+    private int _playerHp;
 
     private GameObject _bossHPUI;
     private GameObject[] _bossHPImages;
@@ -69,6 +70,7 @@ public class UIManager : MonoBehaviour
             _playerHurtEffect = new Image[2];
             _inGameUI = Instantiate(_inGameUIPrefab);
             _playerHPUI = _inGameUI.transform.GetChild(0).gameObject;
+            _playerHp = _playerHPUI.transform.childCount - 1 - player.HP();
             _rectTransform[0] = _playerHPUI.GetComponent<RectTransform>();
             _bossHPUI = _inGameUI.transform.GetChild(1).gameObject;
             _rectTransform[1] = _bossHPUI.GetComponent<RectTransform>();
@@ -88,11 +90,13 @@ public class UIManager : MonoBehaviour
         }
         for (int i = 0; i < player.HP(); ++i)
         {
-            _playerHPImages[i] = _playerHPUI.transform.GetChild(i + 1).GetChild(0).gameObject;
+            _playerHPImages[i] = _playerHPUI.transform.GetChild(i + _playerHp + 1).GetChild(0).gameObject;
+            _playerHPImages[i].transform.parent.gameObject.SetActive(true);
         }
         for (int i = 0; i < boss.HP(); ++i)
         {
             _bossHPImages[i] = _bossHPUI.transform.GetChild(i + 1).GetChild(0).gameObject;
+            _bossHPImages[i].transform.parent.gameObject.SetActive(true);
         }
         for (int i = 0; i < 3; ++i)
         {
