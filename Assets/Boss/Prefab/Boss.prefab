@@ -716,6 +716,7 @@ GameObject:
   - component: {fileID: 5791679862698614624}
   - component: {fileID: 5791679862698614639}
   - component: {fileID: 5791679862698614638}
+  - component: {fileID: 8996909962968914692}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Boss
@@ -777,8 +778,6 @@ MonoBehaviour:
   _damageTreshold: 15
   _diminishingTime: 3
   _Hp: 5
-  _damageEffect: {fileID: 3220638040115060672, guid: 1392deeb6a1de124ba2e0532d2037888, type: 3}
-  _hitEffect: {fileID: 5027869537162949470, guid: fd9174ed23acc354b80c8100d4ba097f, type: 3}
 --- !u!95 &5791679862698614638
 Animator:
   serializedVersion: 5
@@ -800,6 +799,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8996909962968914692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5791679862698614628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b15ca403031d82419ead626f3fa9d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hitEffect: {fileID: 3220638040115060672, guid: 1392deeb6a1de124ba2e0532d2037888, type: 3}
+  _spreadEffect: {fileID: 5027869537162949470, guid: fd9174ed23acc354b80c8100d4ba097f, type: 3}
+  _slashEffect: {fileID: 3404394823829503790, guid: c96f6101bceb49d42acde20975a22336, type: 3}
 --- !u!1 &5791679862943510441
 GameObject:
   m_ObjectHideFlags: 0

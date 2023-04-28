@@ -17,9 +17,7 @@ public class BossGroggy : StateMachineBehaviour
     public event Action OnGroggyEnd;
     public event Action<float> OnGroggyTime;
     public event Action OnAttackSuccess;
-
-    private IObjectPool<Effect> _pool;
-    [SerializeField] private GameObject _particle;
+    public event Func<Effect> OnSlashEffectCreate;
     private Transform _transform;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -27,7 +25,6 @@ public class BossGroggy : StateMachineBehaviour
         {
             _attackZone = animator.transform.Find("Circle").gameObject.GetComponent<AttackZone>();
             _transform = animator.transform;
-            InitPool();
             _attackZone.OnZone -= isOnZone;
             _attackZone.OffZone -= isOffZone;
             _attackZone.OnZone += isOnZone;
@@ -44,8 +41,8 @@ public class BossGroggy : StateMachineBehaviour
             animator.SetBool("isGroggy", false);
             OnGroggyEnd?.Invoke();
             OnAttackSuccess?.Invoke();
+            Effect SlashEffect = OnSlashEffectCreate?.Invoke();
             animator.GetComponent<Boss>().Damaged();
-            Effect particle = _pool.Get();
         }
 
         _elapsedTime += Time.deltaTime;
@@ -74,35 +71,4 @@ public class BossGroggy : StateMachineBehaviour
     }
     private void isOnZone () => _isOnZone = true;
     private void isOffZone() => _isOnZone = false;
-
-    private void InitPool()
-    {
-        if (_pool == null)
-        {
-            _pool = new ObjectPool<Effect>(Create, OnGet, OnRelease, OnDestroyParticle, maxSize: 2);
-        }
-    }
-
-    private Effect Create()
-    {
-        Effect particle = Instantiate(_particle, _transform.position, Quaternion.Euler(0,0,Random.Range(0,360))).GetComponent<Effect>();
-        particle.SetPool(_pool);
-        return particle;
-    }
-
-    private void OnGet(Effect particle)
-    {
-        particle.gameObject.SetActive(true);
-        particle.transform.position = _transform.position;
-        particle.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 360));
-    }
-    private void OnRelease(Effect particle)
-    {
-        particle.gameObject.SetActive(false);
-    }
-
-    private void OnDestroyParticle(Effect particle)
-    {
-        Destroy(particle.gameObject);
-    }
 }
