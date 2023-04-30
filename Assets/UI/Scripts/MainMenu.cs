@@ -59,6 +59,6 @@ public class MainMenu : Menu
             _panel.color = new Color(0, 0, 0, elapsedTime);
             yield return null;
         }
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("InGame");
     }
 }

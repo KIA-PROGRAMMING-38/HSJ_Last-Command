@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.Experimental.AI;
 using UnityEngine.UI;
 using Util.Manager;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class UIManager : MonoBehaviour
 {
