@@ -54,7 +54,7 @@ public class Bullet : MonoBehaviour
 
         yield return new WaitForSeconds(_coroutineWaitTime);
 
-        while (Vector2.Distance(transform.position, (Vector2)_boss.transform.position) >= 0.2f)
+        while (Vector2.Distance(transform.position, (Vector2)_boss.transform.position) >= 0.001f)
         {
             ResetSettings(_boss.transform.position, _lerpSpeed2);
             float ratio = Mathf.Clamp01(Time.deltaTime / _moveTime);
