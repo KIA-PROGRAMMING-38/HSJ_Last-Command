@@ -3,19 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Boss
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Bullet
+  - Invincible
+  - Block
+  - CheckZone
+  - DespawnZone
   - 
   - 
   - 
@@ -40,4 +41,22 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Heart Background
+    uniqueID: 2773196331
+    locked: 0
+  - name: Heart(None)
+    uniqueID: 325871099
+    locked: 0
+  - name: Heart(Temp)
+    uniqueID: 724829123
+    locked: 0
+  - name: Heart(Conf)
+    uniqueID: 191278415
+    locked: 0
+  - name: Player
+    uniqueID: 2656520177
+    locked: 0
+  - name: Particle
+    uniqueID: 2682021029
     locked: 0
